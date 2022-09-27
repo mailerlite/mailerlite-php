@@ -1,0 +1,46 @@
+{
+    "name": "mailerlite/mailerlite-php",
+    "description": "MailerLite PHP SDK",
+    "keywords": [
+        "MailerLite",
+        "mailerlite",
+        "sdk",
+        "email",
+        "marketing"
+    ],
+    "homepage": "https://github.com/mailerlite/mailerlite-php",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Remigijus Rekerta",
+            "email": "remigijus.rekerta@mailerlite.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "friendsofphp/php-cs-fixer": "^3.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "MailerLite\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MailerLite\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "@php vendor/bin/phpunit tests/"
+        ],
+        "phpcs": [
+            "@php vendor/bin/php-cs-fixer fix --verbose --diff"
+        ]
+    }
+}
