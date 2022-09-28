@@ -2,7 +2,16 @@
 
 namespace MailerLite\Tests;
 
+use Http\Mock\Client;
+
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    // todo
+    protected Client $client;
+
+    public const OPTIONS = [
+        'host' => 'dashboard.mailerlite.com',
+        'protocol' => 'https',
+        'api_path' => 'api',
+        'api_key' => 'api-key'
+    ];
 }
