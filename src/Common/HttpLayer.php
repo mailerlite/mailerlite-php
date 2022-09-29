@@ -42,25 +42,25 @@ class HttpLayer
 
     public function get(string $uri, array $body = []): array
     {
-        return $this->call_method('GET', $uri, $body);
+        return $this->callMethod('GET', $uri, $body);
     }
 
     public function post(string $uri, array $body): array
     {
-        return $this->call_method('POST', $uri, $body);
+        return $this->callMethod('POST', $uri, $body);
     }
 
     public function put(string $uri, array $body): array
     {
-        return $this->call_method('PUT', $uri, $body);
+        return $this->callMethod('PUT', $uri, $body);
     }
 
     public function delete(string $uri, array $body = []): array
     {
-        return $this->call_method('DELETE', $uri, $body);
+        return $this->callMethod('DELETE', $uri, $body);
     }
 
-    protected function call_method(string $method, string $uri, array $body): array
+    protected function callMethod(string $method, string $uri, array $body): array
     {
         $request = $this->requestFactory->createRequest($method, $uri)
             ->withBody($this->buildBody($body));

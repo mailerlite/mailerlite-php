@@ -23,8 +23,8 @@ class MailerLite
 
     protected ?HttpLayer $httpLayer;
 
-    public Subscriber $subscriber;
-    public Campaign $campaign;
+    public Subscriber $subscribers;
+    public Campaign $campaigns;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
@@ -55,7 +55,7 @@ class MailerLite
 
     protected function setEndpoints(): void
     {
-        $this->subscriber = new Subscriber($this->httpLayer, $this->options);
-        $this->campaign = new Campaign($this->httpLayer, $this->options);
+        $this->subscribers = new Subscriber($this->httpLayer, $this->options);
+        $this->campaigns = new Campaign($this->httpLayer, $this->options);
     }
 }

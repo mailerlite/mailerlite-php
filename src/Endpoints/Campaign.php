@@ -14,14 +14,14 @@ class Campaign extends AbstractEndpoint
         );
     }
 
-    public function read(string $campaignId): array
+    public function find(string $campaignId): array
     {
         return $this->httpLayer->get(
             $this->buildUri($this->endpoint) . "/{$campaignId}"
         );
     }
 
-    public function readAll(array $params): array
+    public function get(array $params): array
     {
         return $this->httpLayer->get(
             $this->buildUri($this->endpoint, $params)

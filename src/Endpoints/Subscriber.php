@@ -14,14 +14,14 @@ class Subscriber extends AbstractEndpoint
         );
     }
 
-    public function read(string $subscriberId): array
+    public function find(string $subscriberId): array
     {
         return $this->httpLayer->get(
             $this->buildUri($this->endpoint) . "/{$subscriberId}"
         );
     }
 
-    public function readAll(array $params = []): array
+    public function get(array $params = []): array
     {
         return $this->httpLayer->get(
             $this->buildUri($this->endpoint, $params)

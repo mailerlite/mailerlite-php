@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class CampaignTest extends TestCase
 {
-    protected Campaign $campaign;
+    protected Campaign $campaigns;
     protected ResponseInterface $response;
     protected int $campaignId;
 
@@ -20,7 +20,7 @@ class CampaignTest extends TestCase
 
         $this->client = new Client();
 
-        $this->campaign = new Campaign(new HttpLayer(self::OPTIONS, $this->client), self::OPTIONS);
+        $this->campaigns = new Campaign(new HttpLayer(self::OPTIONS, $this->client), self::OPTIONS);
         $this->campaignId = '123';
 
         $this->response = $this->createMock(ResponseInterface::class);
@@ -30,7 +30,7 @@ class CampaignTest extends TestCase
 
     public function test_create()
     {
-        $this->campaign->create([]);
+        $this->campaigns->create([]);
 
         $request = $this->client->getLastRequest();
 
@@ -38,9 +38,9 @@ class CampaignTest extends TestCase
         self::assertEquals('/api/campaigns', $request->getUri()->getPath());
     }
 
-    public function test_read()
+    public function test_find()
     {
-        $this->campaign->read($this->campaignId);
+        $this->campaigns->find($this->campaignId);
 
         $request = $this->client->getLastRequest();
 
@@ -50,7 +50,7 @@ class CampaignTest extends TestCase
 
     public function test_read_all()
     {
-        $this->campaign->readAll([]);
+        $this->campaigns->get([]);
 
         $request = $this->client->getLastRequest();
 
@@ -60,7 +60,7 @@ class CampaignTest extends TestCase
 
     public function test_update()
     {
-        $this->campaign->update($this->campaignId, []);
+        $this->campaigns->update($this->campaignId, []);
 
         $request = $this->client->getLastRequest();
 
@@ -70,7 +70,7 @@ class CampaignTest extends TestCase
 
     public function test_delete()
     {
-        $this->campaign->delete($this->campaignId);
+        $this->campaigns->delete($this->campaignId);
 
         $request = $this->client->getLastRequest();
 
@@ -80,7 +80,7 @@ class CampaignTest extends TestCase
 
     public function test_schedule()
     {
-        $this->campaign->schedule($this->campaignId, []);
+        $this->campaigns->schedule($this->campaignId, []);
 
         $request = $this->client->getLastRequest();
 
@@ -90,7 +90,7 @@ class CampaignTest extends TestCase
 
     public function test_stop()
     {
-        $this->campaign->cancel($this->campaignId);
+        $this->campaigns->cancel($this->campaignId);
 
         $request = $this->client->getLastRequest();
 

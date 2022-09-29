@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class SubscriberTest extends TestCase
 {
-    protected Subscriber $subscriber;
+    protected Subscriber $subscribers;
     protected ResponseInterface $response;
     protected int $subscriberId;
 
@@ -20,7 +20,7 @@ class SubscriberTest extends TestCase
 
         $this->client = new Client();
 
-        $this->subscriber = new Subscriber(new HttpLayer(self::OPTIONS, $this->client), self::OPTIONS);
+        $this->subscribers = new Subscriber(new HttpLayer(self::OPTIONS, $this->client), self::OPTIONS);
         $this->subscriberId = '123';
 
         $this->response = $this->createMock(ResponseInterface::class);
@@ -30,7 +30,7 @@ class SubscriberTest extends TestCase
 
     public function test_create()
     {
-        $this->subscriber->create([]);
+        $this->subscribers->create([]);
 
         $request = $this->client->getLastRequest();
 
@@ -38,9 +38,9 @@ class SubscriberTest extends TestCase
         self::assertEquals('/api/subscribers', $request->getUri()->getPath());
     }
 
-    public function test_read()
+    public function test_find()
     {
-        $this->subscriber->read($this->subscriberId);
+        $this->subscribers->find($this->subscriberId);
 
         $request = $this->client->getLastRequest();
 
@@ -48,9 +48,9 @@ class SubscriberTest extends TestCase
         self::assertEquals("/api/subscribers/{$this->subscriberId}", $request->getUri()->getPath());
     }
 
-    public function test_read_all()
+    public function test_get()
     {
-        $this->subscriber->readAll([]);
+        $this->subscribers->get([]);
 
         $request = $this->client->getLastRequest();
 
@@ -60,7 +60,7 @@ class SubscriberTest extends TestCase
 
     public function test_update()
     {
-        $this->subscriber->update($this->subscriberId, []);
+        $this->subscribers->update($this->subscriberId, []);
 
         $request = $this->client->getLastRequest();
 
@@ -70,7 +70,7 @@ class SubscriberTest extends TestCase
 
     public function test_delete()
     {
-        $this->subscriber->delete($this->subscriberId);
+        $this->subscribers->delete($this->subscriberId);
 
         $request = $this->client->getLastRequest();
 

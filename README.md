@@ -31,6 +31,13 @@
 
 - PHP 7.4
 - An API Key from MailerLite
+- PSR-7 and PSR-18 based HTTP adapter
+
+## Setup
+
+```bash
+composer require mailerlite/mailerlite-php
+```
 
 If you get an error saying “Could not find resource using any discovery strategy.”
 it means that all the discovery strategies have failed. Most likely, your project is missing the message factories and/or a PRS-7 implementation.
@@ -40,12 +47,6 @@ To resolve this you may run
 $ composer require php-http/curl-client guzzlehttp/psr7 php-http/message
 ```
 
-## Setup
-
-```bash
-composer require mailerlite/mailerlite-php
-```
-
 <a name="usage"></a>
 
 # Usage
@@ -53,6 +54,9 @@ composer require mailerlite/mailerlite-php
 ## Subscriber
 
 <a name="create-subscriber"></a>
+
+More information on request parameters:
+https://mailerlite.github.io/reference/subscribers.html
 
 ### Create
 
@@ -65,7 +69,7 @@ $data = [
     'email' => 'subscriber@example.com',
 ];
 
-$data = $mailerlite->subscriber->create($data);
+$response = $mailerlite->subscribers->create($data);
 ```
 
 <a name="get-subscriber"></a>
@@ -81,7 +85,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $subscriberId = '123';
 
-$mailerLite->subscriber->read($subscriberId);
+$response = $mailerLite->subscribers->find($subscriberId);
 ```
 
 All records
@@ -91,7 +95,7 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$mailerLite->subscriber->readAll();
+$response = $mailerLite->subscribers->get();
 ```
 
 <a name="update-subscriber"></a>
@@ -111,7 +115,7 @@ $data = [
     ],
 ];
 
-$data = $mailerlite->subscriber->update($subscriberId, $data);
+$response = $mailerlite->subscribers->update($subscriberId, $data);
 ```
 
 <a name="delete-subscriber"></a>
@@ -125,7 +129,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $subscriberId = '123',
 
-$data = $mailerlite->subscriber->delete($subscriberId);
+$response = $mailerlite->subscribers->delete($subscriberId);
 ```
 
 <a name="campaign"></a>
@@ -133,6 +137,9 @@ $data = $mailerlite->subscriber->delete($subscriberId);
 ## Campaign
 
 <a name="create-campaign"></a>
+
+More information on request parameters:
+https://mailerlite.github.io/reference/campaigns.htm
 
 ### Create
 
@@ -156,7 +163,7 @@ $data = [
     'filter' => [],
 ];
 
-$response = $mailerlite->campaign->create($data);
+$response = $mailerlite->campaigns->create($data);
 ```
 
 <a name="read-campaign"></a>
@@ -172,7 +179,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $campaignId = '123',
 
-$response = $mailerlite->campaign->read($campaignId);
+$response = $mailerlite->campaigns->find($campaignId);
 ```
 
 All records
@@ -186,7 +193,7 @@ $data = [
     'filter' => ['status' => 'sent'],
 ];
 
-$response = $mailerLite->campaign->readAll($data);
+$response = $mailerLite->campaigns->get($data);
 ```
 
 <a name="update-campaign"></a>
@@ -211,7 +218,7 @@ $data = [
     ],
 ];
 
-$response = $mailerlite->campaign->update($campaignId, $data);
+$response = $mailerlite->campaigns->update($campaignId, $data);
 ```
 
 <a name="delete-campaign"></a>
@@ -225,7 +232,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $campaignId = '123',
 
-$response = $mailerlite->campaign->delete($campaignId);
+$response = $mailerlite->campaigns->delete($campaignId);
 ```
 
 <a name="schedule-campaign"></a>
@@ -243,7 +250,7 @@ $data = [
     'delivery' => 'instant',
 ];
 
-$response = $mailerlite->campaign->schedule($campaignId, $data);
+$response = $mailerlite->campaigns->schedule($campaignId, $data);
 ```
 
 <a name="cancel-campaign"></a>
@@ -257,7 +264,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $campaignId = '123',
 
-$response = $mailerlite->campaign->cancel($campaignId);
+$response = $mailerlite->campaigns->cancel($campaignId);
 ```
 
 <a name="testing"></a>
