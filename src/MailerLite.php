@@ -14,8 +14,8 @@ class MailerLite
 {
     protected array $options;
     protected static array $defaultOptions = [
-        'host' => 'localhost:8080',
-        'protocol' => 'http',
+        'host' => 'connect.mailerlite.com',
+        'protocol' => 'https',
         'api_path' => 'api',
         'api_key' => '',
         'debug' => false,
