@@ -8,6 +8,11 @@
 
 * [Installation](#installation)
 * [Usage](#usage)
+    * [Subscriber API](#subscriber-api)
+        * [Create](#create-subscriber)
+        * [Read](#read-subscriber)
+        * [Update](#update-subscriber)
+        * [Delete](#delete-subscriber)
     * [Campaign API](#email-api)
         * [Create](#create-campaign)
         * [Read](#read-campaign)
@@ -44,6 +49,84 @@ composer require mailerlite/mailerlite-php
 <a name="usage"></a>
 
 # Usage
+
+## Subscriber
+
+<a name="create-subscriber"></a>
+
+### Create
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    'email' => 'subscriber@example.com',
+];
+
+$data = $mailerlite->subscriber->create($data);
+```
+
+<a name="get-subscriber"></a>
+
+### Read
+
+Single record
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$subscriberId = '123';
+
+$mailerLite->subscriber->read($subscriberId);
+```
+
+All records
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$mailerLite->subscriber->readAll();
+```
+
+<a name="update-subscriber"></a>
+
+### Update
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$subscriberId = '123',
+
+$data = [
+    'fields' => [
+        'name' => 'Example',
+    ],
+];
+
+$data = $mailerlite->subscriber->update($subscriberId, $data);
+```
+
+<a name="delete-subscriber"></a>
+
+### Delete
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$subscriberId = '123',
+
+$data = $mailerlite->subscriber->delete($subscriberId);
+```
 
 <a name="campaign"></a>
 

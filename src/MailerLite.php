@@ -4,6 +4,7 @@ namespace MailerLite;
 
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Campaign;
+use MailerLite\Endpoints\Subscriber;
 use MailerLite\Exceptions\MailerLiteException;
 
 /**
@@ -13,8 +14,8 @@ class MailerLite
 {
     protected array $options;
     protected static array $defaultOptions = [
-        'host' => 'dashboard.mailerlite.com',
-        'protocol' => 'https',
+        'host' => 'localhost:8080',
+        'protocol' => 'http',
         'api_path' => 'api',
         'api_key' => '',
         'debug' => false,
@@ -22,6 +23,7 @@ class MailerLite
 
     protected ?HttpLayer $httpLayer;
 
+    public Subscriber $subscriber;
     public Campaign $campaign;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
@@ -53,6 +55,7 @@ class MailerLite
 
     protected function setEndpoints(): void
     {
+        $this->subscriber = new Subscriber($this->httpLayer, $this->options);
         $this->campaign = new Campaign($this->httpLayer, $this->options);
     }
 }
