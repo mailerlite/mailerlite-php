@@ -47,7 +47,7 @@
         "test": [
             "@php vendor/bin/phpunit tests/"
         ],
-        "phpcs": [
+        "format": [
             "@php vendor/bin/php-cs-fixer fix --verbose --diff"
         ]
     }
