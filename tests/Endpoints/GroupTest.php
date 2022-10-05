@@ -2,9 +2,11 @@
 
 namespace MailerLite\Tests\Endpoints;
 
+use Http\Mock\Client;
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Group;
 use MailerLite\Tests\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 class GroupTest extends TestCase
 {
