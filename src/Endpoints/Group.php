@@ -53,14 +53,14 @@ class Group extends AbstractEndpoint
     public function assignSubscriber(string $groupId, string $subscriberId): array
     {
         return $this->httpLayer->post(
-            $this->buildUri('subscribers') . "/{$subscriberId}/groups/{$groupId}/subscribers"
+            $this->buildUri('subscribers') . "/{$subscriberId}/groups/{$groupId}"
         );
     }
 
     public function unAssignSubscriber(string $groupId, string $subscriberId): array
     {
         return $this->httpLayer->delete(
-            $this->buildUri('subscribers') . "/{$subscriberId}/groups/{$groupId}/subscribers"
+            $this->buildUri('subscribers') . "/{$subscriberId}/groups/{$groupId}"
         );
     }
 }
