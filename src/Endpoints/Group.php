@@ -21,7 +21,7 @@ class Group extends AbstractEndpoint
         );
     }
 
-    public function get(array $params): array
+    public function get(array $params = []): array
     {
         return $this->httpLayer->get(
             $this->buildUri($this->endpoint, $params)

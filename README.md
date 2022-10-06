@@ -20,6 +20,21 @@
         * [Delete](#delete-campaign)
         * [Schedule](#schedule-campaign)
         * [Cancel](#cancel-campaign)
+    * [Group API](#group)
+        * [Create](#group-create)
+        * [Update](#group-update)
+        * [Read](#group-read)
+        * [Delete](#group-delete)
+        * [Get subscribers](#group-list-subscribers)
+        * [Assign subscriber](#group-assign-subscriber)
+        * [Unassign subscriber](#group-unassign-subscriber)
+    * [Segment API](#segment)
+        * [Update](#segment-update)
+        * [Read](#segment-read)
+        * [Delete](#segment-delete)
+        * [Get subscribers](#segment-list-subscribers)
+               
+        
 * [Testing](#testing)
 * [License](#license)
 
@@ -56,7 +71,7 @@ $ composer require php-http/curl-client guzzlehttp/psr7 php-http/message
 <a name="create-subscriber"></a>
 
 More information on request parameters:
-https://mailerlite.github.io/reference/subscribers.html
+https://developers.mailerlite.com/docs/subscribers.html
 
 ### Create
 
@@ -139,7 +154,7 @@ $response = $mailerlite->subscribers->delete($subscriberId);
 <a name="create-campaign"></a>
 
 More information on request parameters:
-https://mailerlite.github.io/reference/campaigns.htm
+https://developers.mailerlite.com/docs/campaigns.html
 
 ### Create
 
@@ -230,7 +245,7 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
 $response = $mailerlite->campaigns->delete($campaignId);
 ```
@@ -265,6 +280,174 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $campaignId = '123',
 
 $response = $mailerlite->campaigns->cancel($campaignId);
+```
+
+<a name="group"></a>
+## Group API
+More information on request parameters:
+https://developers.mailerlite.com/docs/groups.html
+
+<a name="group-create"></a>
+### Create
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+$data = [
+    "name" => "New group",
+];
+
+$response = $mailerLite->groups->create($groupId, $data);
+```
+<a name="group-read"></a>
+### Read
+
+Single record
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+
+$response = $mailerLite->groups->find($groupId);
+```
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->groups->get();
+```
+
+<a name="group-update"></a>
+
+### Update
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+$data = [
+    "name" => "Updated name",
+];
+
+$response = $mailerLite->groups->update($groupId, $data);
+```
+
+<a name="group-delete"></a>
+
+### Delete
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+
+$response = $mailerLite->groups->delete($groupId);
+```
+
+<a name="group-list-subscribers"></a>
+### Get subscribers who belong to a group
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+
+$response = $mailerLite->groups->getSubscribers($groupId);
+```
+
+<a name="group-assign-subscriber"></a>
+### Assign subscriber to a group
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+$subscriberId = '456';
+
+$response = $mailerLite->groups->assignSubscriber($groupId, $subscriberId);
+```
+
+<a name="group-unassign-subscriber"></a>
+### unassign subscriber from a group
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+$subscriberId = '456';
+
+$response = $mailerLite->groups->unAssignSubscriber($groupId, $subscriberId);
+```
+
+<a name="segment"></a>
+## Segment API
+More information on request parameters:
+https://developers.mailerlite.com/docs/segments.html
+
+<a name="segment-read"></a>
+
+### Read
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->segments->get();
+```
+
+<a name="segment-update"></a>
+
+### Update
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$segmentId = '123';
+$data = [
+    "name" => "Updated name",
+];
+
+$response = $mailerLite->segments->update($segmentId, $data);
+```
+
+<a name="segment-delete"></a>
+### Delete
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$segmentId = '123';
+
+$response = $mailerLite->segments->delete($segmentId);
+```
+
+<a name="segment-subscribers"></a>
+### Get subscribers who belong to a segment
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$segmentId = '123';
+
+$response = $mailerLite->segments->getSubscribers($segmentId);
 ```
 
 <a name="testing"></a>

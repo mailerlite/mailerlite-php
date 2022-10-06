@@ -6,7 +6,7 @@ class Segment extends AbstractEndpoint
 {
     protected string $endpoint = 'segments';
 
-    public function get(array $params): array
+    public function get(array $params = []): array
     {
         return $this->httpLayer->get(
             $this->buildUri($this->endpoint, $params)

@@ -4,6 +4,8 @@ namespace MailerLite;
 
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Campaign;
+use MailerLite\Endpoints\Group;
+use MailerLite\Endpoints\Segment;
 use MailerLite\Endpoints\Subscriber;
 use MailerLite\Exceptions\MailerLiteException;
 
@@ -25,6 +27,8 @@ class MailerLite
 
     public Subscriber $subscribers;
     public Campaign $campaigns;
+    public Group  $groups;
+    public Segment $segments;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
