@@ -45,7 +45,7 @@ class HttpLayer
         return $this->callMethod('GET', $uri, $body);
     }
 
-    public function post(string $uri, array $body): array
+    public function post(string $uri, array $body = []): array
     {
         return $this->callMethod('POST', $uri, $body);
     }
