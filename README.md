@@ -33,6 +33,11 @@
         * [Read](#segment-read)
         * [Delete](#segment-delete)
         * [Get subscribers](#segment-list-subscribers)
+    * [Field API](#field)
+        * [Create](#field-create)
+        * [Update](#field-update)
+        * [Read](#field-read)
+        * [Delete](#field-delete)    
                
         
 * [Testing](#testing)
