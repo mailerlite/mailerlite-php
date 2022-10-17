@@ -37,9 +37,11 @@
         * [Create](#field-create)
         * [Update](#field-update)
         * [Read](#field-read)
-        * [Delete](#field-delete)    
-               
-        
+        * [Delete](#field-delete)   
+    * [Form API](#form)
+      * [Update](#form-update)
+      * [Read](#form-read)
+      * [Delete](#form-delete)                    
 * [Testing](#testing)
 * [License](#license)
 
@@ -514,6 +516,52 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $fieldId = '123';
 
 $response = $mailerLite->fields->delete($fieldId);
+```
+
+<a name="form"></a>
+## Form API
+More information on request parameters:
+https://developers.mailerlite.com/docs/forms.html
+
+<a name="form-read"></a>
+### Read
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->forms->get();
+```
+
+<a name="form-update"></a>
+
+### Update
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+$data = [
+    "name" => "Updated name",
+];
+
+$response = $mailerLite->forms->update($formId, $data);
+```
+
+<a name="form-delete"></a>
+
+### Delete
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+
+$response = $mailerLite->forms->delete(formId);
 ```
 
 <a name="testing"></a>
