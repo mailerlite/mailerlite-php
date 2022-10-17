@@ -4,6 +4,7 @@ namespace MailerLite;
 
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Campaign;
+use MailerLite\Endpoints\Field;
 use MailerLite\Endpoints\Group;
 use MailerLite\Endpoints\Segment;
 use MailerLite\Endpoints\Subscriber;
@@ -29,6 +30,7 @@ class MailerLite
     public Campaign $campaigns;
     public Group  $groups;
     public Segment $segments;
+    public Field $fields;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {

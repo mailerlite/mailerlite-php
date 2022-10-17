@@ -295,12 +295,11 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$groupId = '123';
 $data = [
     "name" => "New group",
 ];
 
-$response = $mailerLite->groups->create($groupId, $data);
+$response = $mailerLite->groups->create($data);
 ```
 <a name="group-read"></a>
 ### Read
@@ -448,6 +447,68 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $segmentId = '123';
 
 $response = $mailerLite->segments->getSubscribers($segmentId);
+```
+
+<a name="field"></a>
+## Field API
+More information on request parameters:
+https://developers.mailerlite.com/docs/fields.html
+
+<a name="field-create"></a>
+### Create
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    "name" => "New field",
+    "type" => "text",
+];
+
+$response = $mailerLite->fields->create($data);
+```
+
+<a name="field-read"></a>
+### Read
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->fields->get();
+```
+
+<a name="field-update"></a>
+
+### Update
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$fieldId = '123';
+$data = [
+    "name" => "Updated name",
+];
+
+$response = $mailerLite->fields->update($fieldId, $data);
+```
+
+<a name="field-delete"></a>
+
+### Delete
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$fieldId = '123';
+
+$response = $mailerLite->fields->delete($fieldId);
 ```
 
 <a name="testing"></a>
