@@ -20,6 +20,7 @@
         * [Delete](#delete-campaign)
         * [Schedule](#schedule-campaign)
         * [Cancel](#cancel-campaign)
+        * [Subscriber activity](#campaign-subscriber-activity)
     * [Group API](#group)
         * [Create](#group-create)
         * [Update](#group-update)
@@ -33,8 +34,19 @@
         * [Read](#segment-read)
         * [Delete](#segment-delete)
         * [Get subscribers](#segment-list-subscribers)
-               
-        
+    * [Field API](#field)
+        * [Create](#field-create)
+        * [Update](#field-update)
+        * [Read](#field-read)
+        * [Delete](#field-delete)   
+    * [Form API](#form)
+      * [Update](#form-update)
+      * [Read](#form-read)
+      * [Delete](#form-delete)    
+      * [Signups](#form-subscribers)  
+    * [Automation API](#automation)
+      * [Read](#automation-read)
+      * [Activity](#automation-activity)                
 * [Testing](#testing)
 * [License](#license)
 
@@ -84,7 +96,7 @@ $data = [
     'email' => 'subscriber@example.com',
 ];
 
-$response = $mailerlite->subscribers->create($data);
+$response = $mailerLite->subscribers->create($data);
 ```
 
 <a name="get-subscriber"></a>
@@ -130,7 +142,7 @@ $data = [
     ],
 ];
 
-$response = $mailerlite->subscribers->update($subscriberId, $data);
+$response = $mailerLite->subscribers->update($subscriberId, $data);
 ```
 
 <a name="delete-subscriber"></a>
@@ -142,9 +154,9 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$subscriberId = '123',
+$subscriberId = '123';
 
-$response = $mailerlite->subscribers->delete($subscriberId);
+$response = $mailerLite->subscribers->delete($subscriberId);
 ```
 
 <a name="campaign"></a>
@@ -178,7 +190,7 @@ $data = [
     'filter' => [],
 ];
 
-$response = $mailerlite->campaigns->create($data);
+$response = $mailerLite->campaigns->create($data);
 ```
 
 <a name="read-campaign"></a>
@@ -192,9 +204,9 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
-$response = $mailerlite->campaigns->find($campaignId);
+$response = $mailerLite->campaigns->find($campaignId);
 ```
 
 All records
@@ -220,7 +232,7 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
 $data = [
     'name' => 'Changed campaign name',
@@ -233,7 +245,7 @@ $data = [
     ],
 ];
 
-$response = $mailerlite->campaigns->update($campaignId, $data);
+$response = $mailerLite->campaigns->update($campaignId, $data);
 ```
 
 <a name="delete-campaign"></a>
@@ -247,7 +259,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $campaignId = '123';
 
-$response = $mailerlite->campaigns->delete($campaignId);
+$response = $mailerLite->campaigns->delete($campaignId);
 ```
 
 <a name="schedule-campaign"></a>
@@ -259,13 +271,13 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
 $data = [
     'delivery' => 'instant',
 ];
 
-$response = $mailerlite->campaigns->schedule($campaignId, $data);
+$response = $mailerLite->campaigns->schedule($campaignId, $data);
 ```
 
 <a name="cancel-campaign"></a>
@@ -277,9 +289,25 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
-$response = $mailerlite->campaigns->cancel($campaignId);
+$response = $mailerLite->campaigns->cancel($campaignId);
+```
+
+<a name="campaign-subscriber-activity"></a>
+
+### Subscriber activity of sent campaign
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$campaignId = '123';
+$data = [
+    'type' => 'opened', 
+];
+
+$response = $mailerLite->campaigns->getSubscriberActivity($campaignId, $data);
 ```
 
 <a name="group"></a>
@@ -295,12 +323,11 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$groupId = '123';
 $data = [
     "name" => "New group",
 ];
 
-$response = $mailerLite->groups->create($groupId, $data);
+$response = $mailerLite->groups->create($data);
 ```
 <a name="group-read"></a>
 ### Read
@@ -448,6 +475,183 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $segmentId = '123';
 
 $response = $mailerLite->segments->getSubscribers($segmentId);
+```
+
+<a name="field"></a>
+## Field API
+More information on request parameters:
+https://developers.mailerlite.com/docs/fields.html
+
+<a name="field-create"></a>
+### Create
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    "name" => "New field",
+    "type" => "text",
+];
+
+$response = $mailerLite->fields->create($data);
+```
+
+<a name="field-read"></a>
+### Read
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->fields->get();
+```
+
+<a name="field-update"></a>
+
+### Update
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$fieldId = '123';
+$data = [
+    "name" => "Updated name",
+];
+
+$response = $mailerLite->fields->update($fieldId, $data);
+```
+
+<a name="field-delete"></a>
+
+### Delete
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$fieldId = '123';
+
+$response = $mailerLite->fields->delete($fieldId);
+```
+
+<a name="form"></a>
+## Form API
+More information on request parameters:
+https://developers.mailerlite.com/docs/forms.html
+
+<a name="form-read"></a>
+### Read
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->forms->get('popup', []);
+```
+
+Single
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+
+$response = $mailerLite->forms->find($formId);
+```
+
+<a name="form-update"></a>
+
+### Update
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+$data = [
+    "name" => "Updated name",
+];
+
+$response = $mailerLite->forms->update($formId, $data);
+```
+
+<a name="form-delete"></a>
+
+### Delete
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+
+$response = $mailerLite->forms->delete($formId);
+```
+
+<a name="form-subscribers"></a>
+
+### Signed up subscribers
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+
+$response = $mailerLite->forms->getSignups($formId);
+```
+
+<a name="Automation"></a>
+## Automation API
+More information on request parameters:
+https://developers.mailerlite.com/docs/automations.html
+
+<a name="automation-read"></a>
+### Read
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->automations->get([]);
+```
+
+Single
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+
+$response = $mailerLite->automations->find($automationId);
+```
+
+<a name="automation-activity"></a>
+### Activity
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$data = [
+    'filter' => [
+        'status' => 'active',
+    ],
+];
+
+$response = $mailerLite->automations->activity($automationId, $data);
 ```
 
 <a name="testing"></a>

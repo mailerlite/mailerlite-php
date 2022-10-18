@@ -97,4 +97,17 @@ class CampaignTest extends TestCase
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/campaigns/{$this->campaignId}/cancel", $request->getUri()->getPath());
     }
+
+    public function test_get_subscriber_activity()
+    {
+        $data = [
+            'type' => 'opened',
+        ];
+
+        $this->campaigns->getSubscriberActivity($this->campaignId, $data);
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('POST', $request->getMethod());
+        self::assertEquals("/api/campaigns/{$this->campaignId}/subscriber-activity", $request->getUri()->getPath());
+    }
 }
