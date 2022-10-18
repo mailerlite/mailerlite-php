@@ -42,7 +42,8 @@
     * [Form API](#form)
       * [Update](#form-update)
       * [Read](#form-read)
-      * [Delete](#form-delete)                    
+      * [Delete](#form-delete)    
+      * [Signups](#form-subscribers)                
 * [Testing](#testing)
 * [License](#license)
 
@@ -549,7 +550,18 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$response = $mailerLite->forms->get();
+$response = $mailerLite->forms->get('popup', []);
+```
+
+Single
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+
+$response = $mailerLite->forms->find($formId);
 ```
 
 <a name="form-update"></a>
@@ -578,7 +590,20 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $formId = '123';
 
-$response = $mailerLite->forms->delete(formId);
+$response = $mailerLite->forms->delete($formId);
+```
+
+<a name="form-subscribers"></a>
+
+### Signed up subscribers
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$formId = '123';
+
+$response = $mailerLite->forms->getSignups($formId);
 ```
 
 <a name="testing"></a>

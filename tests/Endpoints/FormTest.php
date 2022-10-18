@@ -30,12 +30,21 @@ class FormTest extends TestCase
 
     public function test_read_all()
     {
-        $this->forms->get([]);
+        $this->forms->get('popup', []);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('GET', $request->getMethod());
-        self::assertEquals('/api/forms', $request->getUri()->getPath());
+        self::assertEquals('/api/forms/popup', $request->getUri()->getPath());
+    }
+
+    public function test_find()
+    {
+        $this->forms->find($this->formId);
+
+        $request = $this->client->getLastRequest();
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals("/api/forms/{$this->formId}", $request->getUri()->getPath());
     }
 
     public function test_update()
@@ -56,5 +65,15 @@ class FormTest extends TestCase
 
         self::assertEquals('DELETE', $request->getMethod());
         self::assertEquals("/api/forms/{$this->formId}", $request->getUri()->getPath());
+    }
+
+    public function test_get_form_signups()
+    {
+        $this->forms->getSignups($this->formId);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals("/api/filter[form]={$this->formId}", $request->getUri()->getPath());
     }
 }
