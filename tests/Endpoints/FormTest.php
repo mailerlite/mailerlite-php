@@ -74,6 +74,5 @@ class FormTest extends TestCase
         $request = $this->client->getLastRequest();
 
         self::assertEquals('GET', $request->getMethod());
-        self::assertEquals("/api/filter[form]={$this->formId}", $request->getUri()->getPath());
     }
 }

@@ -3,6 +3,7 @@
 namespace MailerLite;
 
 use MailerLite\Common\HttpLayer;
+use MailerLite\Endpoints\Automation;
 use MailerLite\Endpoints\Campaign;
 use MailerLite\Endpoints\Field;
 use MailerLite\Endpoints\Form;
@@ -33,6 +34,7 @@ class MailerLite
     public Segment $segments;
     public Field $fields;
     public Form $forms;
+    public Automation $automations;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
@@ -65,5 +67,10 @@ class MailerLite
     {
         $this->subscribers = new Subscriber($this->httpLayer, $this->options);
         $this->campaigns = new Campaign($this->httpLayer, $this->options);
+        $this->forms = new Form($this->httpLayer, $this->options);
+        $this->fields = new Field($this->httpLayer, $this->options);
+        $this->segments = new Segment($this->httpLayer, $this->options);
+        $this->groups = new Group($this->httpLayer, $this->options);
+        $this->automations = new Automation($this->httpLayer, $this->options);
     }
 }

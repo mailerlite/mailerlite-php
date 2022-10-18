@@ -43,7 +43,10 @@
       * [Update](#form-update)
       * [Read](#form-read)
       * [Delete](#form-delete)    
-      * [Signups](#form-subscribers)                
+      * [Signups](#form-subscribers)  
+    * [Automation API](#automation)
+      * [Read](#automation-read)
+      * [Activity](#automation-activity)                
 * [Testing](#testing)
 * [License](#license)
 
@@ -604,6 +607,51 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $formId = '123';
 
 $response = $mailerLite->forms->getSignups($formId);
+```
+
+<a name="Automation"></a>
+## Automation API
+More information on request parameters:
+https://developers.mailerlite.com/docs/automations.html
+
+<a name="automation-read"></a>
+### Read
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->automations->get([]);
+```
+
+Single
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+
+$response = $mailerLite->automations->find($automationId);
+```
+
+<a name="automation-activity"></a>
+### Activity
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$data = [
+    'filter' => [
+        'status' => 'active',
+    ],
+];
+
+$response = $mailerLite->automations->activity($automationId, $data);
 ```
 
 <a name="testing"></a>
