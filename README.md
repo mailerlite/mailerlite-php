@@ -20,6 +20,7 @@
         * [Delete](#delete-campaign)
         * [Schedule](#schedule-campaign)
         * [Cancel](#cancel-campaign)
+        * [Subscriber activity](#campaign-subscriber-activity)
     * [Group API](#group)
         * [Create](#group-create)
         * [Update](#group-update)
@@ -91,7 +92,7 @@ $data = [
     'email' => 'subscriber@example.com',
 ];
 
-$response = $mailerlite->subscribers->create($data);
+$response = $mailerLite->subscribers->create($data);
 ```
 
 <a name="get-subscriber"></a>
@@ -137,7 +138,7 @@ $data = [
     ],
 ];
 
-$response = $mailerlite->subscribers->update($subscriberId, $data);
+$response = $mailerLite->subscribers->update($subscriberId, $data);
 ```
 
 <a name="delete-subscriber"></a>
@@ -149,9 +150,9 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$subscriberId = '123',
+$subscriberId = '123';
 
-$response = $mailerlite->subscribers->delete($subscriberId);
+$response = $mailerLite->subscribers->delete($subscriberId);
 ```
 
 <a name="campaign"></a>
@@ -185,7 +186,7 @@ $data = [
     'filter' => [],
 ];
 
-$response = $mailerlite->campaigns->create($data);
+$response = $mailerLite->campaigns->create($data);
 ```
 
 <a name="read-campaign"></a>
@@ -199,9 +200,9 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
-$response = $mailerlite->campaigns->find($campaignId);
+$response = $mailerLite->campaigns->find($campaignId);
 ```
 
 All records
@@ -227,7 +228,7 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
 $data = [
     'name' => 'Changed campaign name',
@@ -240,7 +241,7 @@ $data = [
     ],
 ];
 
-$response = $mailerlite->campaigns->update($campaignId, $data);
+$response = $mailerLite->campaigns->update($campaignId, $data);
 ```
 
 <a name="delete-campaign"></a>
@@ -254,7 +255,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $campaignId = '123';
 
-$response = $mailerlite->campaigns->delete($campaignId);
+$response = $mailerLite->campaigns->delete($campaignId);
 ```
 
 <a name="schedule-campaign"></a>
@@ -266,13 +267,13 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
 $data = [
     'delivery' => 'instant',
 ];
 
-$response = $mailerlite->campaigns->schedule($campaignId, $data);
+$response = $mailerLite->campaigns->schedule($campaignId, $data);
 ```
 
 <a name="cancel-campaign"></a>
@@ -284,9 +285,25 @@ use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
-$campaignId = '123',
+$campaignId = '123';
 
-$response = $mailerlite->campaigns->cancel($campaignId);
+$response = $mailerLite->campaigns->cancel($campaignId);
+```
+
+<a name="campaign-subscriber-activity"></a>
+
+### Subscriber activity of sent campaign
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$campaignId = '123';
+$data = [
+    'type' => 'opened', 
+];
+
+$response = $mailerLite->campaigns->getSubscriberActivity($campaignId, $data);
 ```
 
 <a name="group"></a>
