@@ -10,6 +10,7 @@ use MailerLite\Endpoints\Form;
 use MailerLite\Endpoints\Group;
 use MailerLite\Endpoints\Segment;
 use MailerLite\Endpoints\Subscriber;
+use MailerLite\Endpoints\Webhook;
 use MailerLite\Exceptions\MailerLiteException;
 
 /**
@@ -35,6 +36,7 @@ class MailerLite
     public Field $fields;
     public Form $forms;
     public Automation $automations;
+    public Webhook $webhooks;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
@@ -72,5 +74,6 @@ class MailerLite
         $this->segments = new Segment($this->httpLayer, $this->options);
         $this->groups = new Group($this->httpLayer, $this->options);
         $this->automations = new Automation($this->httpLayer, $this->options);
+        $this->webhooks = new Webhook($this->httpLayer, $this->options);
     }
 }
