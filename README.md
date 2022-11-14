@@ -652,6 +652,80 @@ $data = [
 $response = $mailerLite->automations->activity($automationId, $data);
 ```
 
+<a name="webhook"></a>
+## Webhook API
+More information on request parameters:
+https://developers.mailerlite.com/docs/webhooks.html
+
+<a name="webook-create"></a>
+### Create
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    "name" => "Name",
+    "events" => ["subscriber.created"],
+    "url": "https://www.cartwright.info/eligendi-soluta-corporis-in-quod-ullam",
+];
+
+$response = $mailerLite->webhooks->create($data);
+```
+
+<a name="webook-read"></a>
+### Read
+
+All records
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->webhooks->get([]);
+```
+
+Single
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$webhookId = '123';
+
+$response = $mailerLite->webhooks->find($webhookId);
+```
+
+<a name="webhook-update"></a>
+
+### Update
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$webhookId = '123';
+$data = [
+    "name" => "Updated name",
+];
+
+$response = $mailerLite->webhooks->update($webhookId, $data);
+```
+
+<a name="webhook-delete"></a>
+
+### Delete
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$webhookId = '123';
+
+$response = $mailerLite->webhooks->delete($webhookId);
+```
+
 <a name="testing"></a>
 # Testing
 
