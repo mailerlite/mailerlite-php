@@ -5,11 +5,13 @@ namespace MailerLite;
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Automation;
 use MailerLite\Endpoints\Campaign;
+use MailerLite\Endpoints\CampaignLanguage;
 use MailerLite\Endpoints\Field;
 use MailerLite\Endpoints\Form;
 use MailerLite\Endpoints\Group;
 use MailerLite\Endpoints\Segment;
 use MailerLite\Endpoints\Subscriber;
+use MailerLite\Endpoints\Timezone;
 use MailerLite\Endpoints\Webhook;
 use MailerLite\Exceptions\MailerLiteException;
 
@@ -37,6 +39,8 @@ class MailerLite
     public Form $forms;
     public Automation $automations;
     public Webhook $webhooks;
+    public Timezone $timezones;
+    public CampaignLanguage $campaignLanguages;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
@@ -75,5 +79,7 @@ class MailerLite
         $this->groups = new Group($this->httpLayer, $this->options);
         $this->automations = new Automation($this->httpLayer, $this->options);
         $this->webhooks = new Webhook($this->httpLayer, $this->options);
+        $this->timezones = new Timezone($this->httpLayer, $this->options);
+        $this->campaignLanguages = new CampaignLanguage($this->httpLayer, $this->options);
     }
 }
