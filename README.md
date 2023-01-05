@@ -51,7 +51,8 @@
       * [Read](#webhook-read)
       * [Delete](#webhook-delete)    
     * [Campaign language API](#campaign-language-read)
-    * [Timezone API](#timezone-read)               
+    * [Timezone API](#timezone-read)    
+    * [Batch API](#batch-send)           
 * [Testing](#testing)
 * [License](#license)
 
@@ -759,6 +760,31 @@ use MailerLite\MailerLite;
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $response = $mailerLite->timezones->get();
+```
+
+## Batch API
+More information about request parameters on https://developers.mailerlite.com/docs/batching.html
+
+<a name="batch-send"></a>
+### Send
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    'requests' => [
+        [
+            'method' => 'post',
+            'path' => 'api/subscribers',
+            'body' => [
+                'email' => 'new_subscriber@mail.com'
+            ]
+        ]
+    ]
+];
+$response = $mailerLite->batches->send($data);
 ```
 
 <a name="testing"></a>

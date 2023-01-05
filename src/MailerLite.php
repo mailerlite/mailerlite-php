@@ -4,6 +4,7 @@ namespace MailerLite;
 
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Automation;
+use MailerLite\Endpoints\Batch;
 use MailerLite\Endpoints\Campaign;
 use MailerLite\Endpoints\CampaignLanguage;
 use MailerLite\Endpoints\Field;
@@ -41,6 +42,7 @@ class MailerLite
     public Webhook $webhooks;
     public Timezone $timezones;
     public CampaignLanguage $campaignLanguages;
+    public Batch $batches;
 
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
@@ -81,5 +83,6 @@ class MailerLite
         $this->webhooks = new Webhook($this->httpLayer, $this->options);
         $this->timezones = new Timezone($this->httpLayer, $this->options);
         $this->campaignLanguages = new CampaignLanguage($this->httpLayer, $this->options);
+        $this->batches = new Batch($this->httpLayer, $this->options);
     }
 }
