@@ -4,8 +4,9 @@ namespace MailerLite\Tests\Endpoints;
 
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\CampaignLanguage;
+use MailerLite\Tests\TestCase;
 
-class CampaignLanguageTest extends \MailerLite\Tests\TestCase
+class CampaignLanguageTest extends TestCase
 {
     protected CampaignLanguage $campaignLanguage;
     protected ResponseInterface $response;
