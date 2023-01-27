@@ -44,7 +44,15 @@
       * [Signups](#form-subscribers)  
     * [Automation API](#automation)
       * [Read](#automation-read)
-      * [Activity](#automation-activity)                
+      * [Activity](#automation-activity)  
+    * [Webhook API](#webhook)
+      * [Create](#webhook-create)
+      * [Update](#webhook-update)
+      * [Read](#webhook-read)
+      * [Delete](#webhook-delete)    
+    * [Campaign language API](#campaign-language-read)
+    * [Timezone API](#timezone-read)    
+    * [Batch API](#batch-send)           
 * [Testing](#testing)
 * [License](#license)
 
@@ -724,6 +732,59 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $webhookId = '123';
 
 $response = $mailerLite->webhooks->delete($webhookId);
+```
+
+## Campaign language API
+More information about request parameters on https://developers.mailerlite.com/docs/campaign-languages.html
+
+<a name="campaign-language-read"></a>
+### Read
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->campaignLanguages->get();
+```
+
+## Timezone API
+More information about request parameters on https://developers.mailerlite.com/docs/timezones.html
+
+<a name="timezone-read"></a>
+### Read
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->timezones->get();
+```
+
+## Batch API
+More information about request parameters on https://developers.mailerlite.com/docs/batching.html
+
+<a name="batch-send"></a>
+### Send
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    'requests' => [
+        [
+            'method' => 'post',
+            'path' => 'api/subscribers',
+            'body' => [
+                'email' => 'new_subscriber@mail.com'
+            ]
+        ]
+    ]
+];
+$response = $mailerLite->batches->send($data);
 ```
 
 <a name="testing"></a>
