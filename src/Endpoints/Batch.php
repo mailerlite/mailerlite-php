@@ -8,7 +8,7 @@ class Batch extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function send(array $params): array

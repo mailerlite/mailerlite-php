@@ -8,7 +8,7 @@ class Campaign extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function create(array $params): array
@@ -31,7 +31,7 @@ class Campaign extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function get(array $params): array
@@ -43,7 +43,7 @@ class Campaign extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function update(string $campaignId, array $params): array
@@ -66,7 +66,7 @@ class Campaign extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function schedule(string $campaignId, array $params): array
@@ -90,7 +90,7 @@ class Campaign extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function getSubscriberActivity(string $campaignId, array $params): array

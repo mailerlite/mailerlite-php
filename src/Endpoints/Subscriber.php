@@ -8,7 +8,7 @@ class Subscriber extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function create(array $params): array
@@ -31,7 +31,7 @@ class Subscriber extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function get(array $params = []): array
@@ -43,7 +43,7 @@ class Subscriber extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function update(string $subscriberId, array $params): array

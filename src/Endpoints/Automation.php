@@ -18,7 +18,7 @@ class Automation extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function get(array $params): array
@@ -30,7 +30,7 @@ class Automation extends AbstractEndpoint
 
     /**
      * @param array<string, mixed> $params
-     * 
+     *
      * @return array<string, mixed>
      */
     public function activity(string $automationId, array $params): array

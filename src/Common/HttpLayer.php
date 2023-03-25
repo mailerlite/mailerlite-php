@@ -48,7 +48,7 @@ class HttpLayer
 
     /**
      * @param array<string, mixed> $body
-     * 
+     *
      * @return array<string, mixed>
      */
     public function get(string $uri, array $body = []): array
@@ -58,7 +58,7 @@ class HttpLayer
 
     /**
      * @param array<string, mixed> $body
-     * 
+     *
      * @return array<string, mixed>
      */
     public function post(string $uri, array $body = []): array
@@ -68,7 +68,7 @@ class HttpLayer
 
     /**
      * @param array<string, mixed> $body
-     * 
+     *
      * @return array<string, mixed>
      */
     public function put(string $uri, array $body): array
@@ -78,7 +78,7 @@ class HttpLayer
 
     /**
      * @param array<string, mixed> $body
-     * 
+     *
      * @return array<string, mixed>
      */
     public function delete(string $uri, array $body = []): array
@@ -88,7 +88,7 @@ class HttpLayer
 
     /**
      * @param array<string, mixed> $body
-     * 
+     *
      * @return array<string, mixed>
      */
     protected function callMethod(string $method, string $uri, array $body): array
