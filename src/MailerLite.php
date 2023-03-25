@@ -21,7 +21,14 @@ use MailerLite\Exceptions\MailerLiteException;
  */
 class MailerLite
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $options;
+
+    /**
+     * @var array<string, mixed>
+     */
     protected static array $defaultOptions = [
         'host' => 'connect.mailerlite.com',
         'protocol' => 'https',
@@ -30,7 +37,7 @@ class MailerLite
         'debug' => false,
     ];
 
-    protected ?HttpLayer $httpLayer;
+    protected HttpLayer $httpLayer;
 
     public Subscriber $subscribers;
     public Campaign $campaigns;
@@ -44,6 +51,9 @@ class MailerLite
     public CampaignLanguage $campaignLanguages;
     public Batch $batches;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
         $this->setOptions($options);
@@ -51,7 +61,10 @@ class MailerLite
         $this->setEndpoints();
     }
 
-    protected function setOptions(?array $options): void
+    /**
+     * @param array<string, mixed> $options
+     */
+    protected function setOptions(array $options): void
     {
         $this->options = self::$defaultOptions;
 

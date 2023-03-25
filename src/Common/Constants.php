@@ -4,5 +4,5 @@ namespace MailerLite\Common;
 
 class Constants
 {
-    public const SDK_VERSION = 'v0.0.1';
+    public const SDK_VERSION = 'v1.0.0';
 }

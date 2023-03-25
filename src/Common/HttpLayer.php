@@ -19,12 +19,18 @@ use Psr\Http\Message\StreamInterface;
 
 class HttpLayer
 {
-    protected ?HttpClient $pluginClient;
-    protected ?RequestFactoryInterface $requestFactory;
-    protected ?StreamFactoryInterface $streamFactory;
+    protected HttpClient $pluginClient;
+    protected RequestFactoryInterface $requestFactory;
+    protected StreamFactoryInterface $streamFactory;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $options;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(
         array $options = [],
         ?ClientInterface $httpClient = null,
@@ -40,26 +46,51 @@ class HttpLayer
         $this->streamFactory = $streamFactory ?: Psr17FactoryDiscovery::findStreamFactory();
     }
 
+    /**
+     * @param array<string, mixed> $body
+     *
+     * @return array<string, mixed>
+     */
     public function get(string $uri, array $body = []): array
     {
         return $this->callMethod('GET', $uri, $body);
     }
 
+    /**
+     * @param array<string, mixed> $body
+     *
+     * @return array<string, mixed>
+     */
     public function post(string $uri, array $body = []): array
     {
         return $this->callMethod('POST', $uri, $body);
     }
 
+    /**
+     * @param array<string, mixed> $body
+     *
+     * @return array<string, mixed>
+     */
     public function put(string $uri, array $body): array
     {
         return $this->callMethod('PUT', $uri, $body);
     }
 
+    /**
+     * @param array<string, mixed> $body
+     *
+     * @return array<string, mixed>
+     */
     public function delete(string $uri, array $body = []): array
     {
         return $this->callMethod('DELETE', $uri, $body);
     }
 
+    /**
+     * @param array<string, mixed> $body
+     *
+     * @return array<string, mixed>
+     */
     protected function callMethod(string $method, string $uri, array $body): array
     {
         $request = $this->requestFactory->createRequest($method, $uri)
@@ -68,6 +99,9 @@ class HttpLayer
         return $this->buildResponse($this->pluginClient->sendRequest($request));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function request(string $method, string $uri, string $body = ''): array
     {
         $request = $this->requestFactory->createRequest($method, $uri);
@@ -79,6 +113,9 @@ class HttpLayer
         return $this->buildResponse($this->pluginClient->sendRequest($request));
     }
 
+    /**
+     * @param array<string, mixed>|string $body
+     */
     protected function buildBody($body): StreamInterface
     {
         $stringBody = is_array($body) ? json_encode($body, JSON_THROW_ON_ERROR) : $body;
@@ -86,6 +123,9 @@ class HttpLayer
         return $this->streamFactory->createStream($stringBody);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function buildResponse(ResponseInterface $response): array
     {
         $contentTypes = $response->getHeader('Content-Type');
@@ -112,15 +152,20 @@ class HttpLayer
         ];
     }
 
+    /**
+     * @return array<int, \Http\Client\Common\Plugin>
+     */
     protected function buildPlugins(): array
     {
-        $authentication = new Bearer($this->options['api_key']);
+        /** @var string $apiKey */
+        $apiKey = $this->options['api_key'];
+        $authentication = new Bearer($apiKey);
         $authenticationPlugin = new AuthenticationPlugin($authentication);
 
         $contentTypePlugin = new ContentTypePlugin();
 
         $headerDefaultsPlugin = new HeaderDefaultsPlugin([
-            'User-Agent' => 'mailersend-php/'.Constants::SDK_VERSION
+            'User-Agent' => 'mailersend-php/' . Constants::SDK_VERSION
         ]);
 
         $httpErrorPlugin = new HttpErrorHelper();

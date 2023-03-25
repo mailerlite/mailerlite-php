@@ -6,6 +6,11 @@ class Form extends AbstractEndpoint
 {
     protected string $endpoint = 'forms';
 
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
     public function get(string $type, array $params = []): array
     {
         return $this->httpLayer->get(
@@ -13,6 +18,9 @@ class Form extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function find(string $formId): array
     {
         return $this->httpLayer->get(
@@ -20,6 +28,11 @@ class Form extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
     public function update(string $formId, array $params): array
     {
         return $this->httpLayer->put(
@@ -28,6 +41,9 @@ class Form extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function delete(string $formId): array
     {
         return $this->httpLayer->delete(
@@ -35,6 +51,9 @@ class Form extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getSignups(string $formId): array
     {
         return $this->httpLayer->get(

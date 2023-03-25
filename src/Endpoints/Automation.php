@@ -6,6 +6,9 @@ class Automation extends AbstractEndpoint
 {
     protected string $endpoint = 'automations';
 
+    /**
+     * @return array<string, mixed>
+     */
     public function find(string $automationId): array
     {
         return $this->httpLayer->get(
@@ -13,6 +16,11 @@ class Automation extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
     public function get(array $params): array
     {
         return $this->httpLayer->get(
@@ -20,6 +28,11 @@ class Automation extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
     public function activity(string $automationId, array $params): array
     {
         return $this->httpLayer->get(

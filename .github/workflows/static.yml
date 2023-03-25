@@ -1,4 +1,4 @@
-name: Code style and static analysis
+name: Static analysis
 
 on:
     push:
@@ -13,7 +13,7 @@ jobs:
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
-                php-versions: ['7.4','8.0']
+                php-versions: ['8.2']
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
 
         steps:
@@ -33,11 +33,11 @@ jobs:
                   path: vendor
                   key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-php-
+                      ${{ runner.os }}-php-${{ matrix.php-versions }}-
 
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
               run: composer install --prefer-dist --no-progress --no-suggest
 
-            - name: Run PHP-CS-Fixer
-              run: composer run-script format --  --dry-run
+            - name: Run PHPStan
+              run: vendor/bin/phpstan analyse --ansi
