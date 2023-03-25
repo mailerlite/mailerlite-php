@@ -6,6 +6,11 @@ class Group extends AbstractEndpoint
 {
     protected string $endpoint = 'groups';
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function create(array $params): array
     {
         return $this->httpLayer->post(
@@ -14,6 +19,9 @@ class Group extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function find(string $groupId): array
     {
         return $this->httpLayer->get(
@@ -21,6 +29,11 @@ class Group extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function get(array $params = []): array
     {
         return $this->httpLayer->get(
@@ -28,6 +41,11 @@ class Group extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function update(string $groupId, array $params): array
     {
         return $this->httpLayer->put(
@@ -36,6 +54,9 @@ class Group extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function delete(string $groupId): array
     {
         return $this->httpLayer->delete(
@@ -43,6 +64,9 @@ class Group extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getSubscribers(string $groupId): array
     {
         return $this->httpLayer->get(
@@ -50,6 +74,9 @@ class Group extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function assignSubscriber(string $groupId, string $subscriberId): array
     {
         return $this->httpLayer->post(
@@ -57,6 +84,9 @@ class Group extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function unAssignSubscriber(string $groupId, string $subscriberId): array
     {
         return $this->httpLayer->delete(

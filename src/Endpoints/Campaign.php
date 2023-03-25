@@ -6,6 +6,11 @@ class Campaign extends AbstractEndpoint
 {
     protected string $endpoint = 'campaigns';
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function create(array $params): array
     {
         return $this->httpLayer->post(
@@ -14,6 +19,9 @@ class Campaign extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function find(string $campaignId): array
     {
         return $this->httpLayer->get(
@@ -21,6 +29,11 @@ class Campaign extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function get(array $params): array
     {
         return $this->httpLayer->get(
@@ -28,6 +41,11 @@ class Campaign extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function update(string $campaignId, array $params): array
     {
         return $this->httpLayer->put(
@@ -36,6 +54,9 @@ class Campaign extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function delete(string $campaignId): array
     {
         return $this->httpLayer->delete(
@@ -43,6 +64,11 @@ class Campaign extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function schedule(string $campaignId, array $params): array
     {
         return $this->httpLayer->post(
@@ -51,6 +77,9 @@ class Campaign extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function cancel(string $campaignId): array
     {
         return $this->httpLayer->post(
@@ -59,6 +88,11 @@ class Campaign extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function getSubscriberActivity(string $campaignId, array $params): array
     {
         return $this->httpLayer->post(

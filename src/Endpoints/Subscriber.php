@@ -6,6 +6,11 @@ class Subscriber extends AbstractEndpoint
 {
     protected string $endpoint = 'subscribers';
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function create(array $params): array
     {
         return $this->httpLayer->post(
@@ -14,6 +19,9 @@ class Subscriber extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function find(string $subscriberId): array
     {
         return $this->httpLayer->get(
@@ -21,6 +29,11 @@ class Subscriber extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function get(array $params = []): array
     {
         return $this->httpLayer->get(
@@ -28,6 +41,11 @@ class Subscriber extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function update(string $subscriberId, array $params): array
     {
         return $this->httpLayer->put(
@@ -36,6 +54,9 @@ class Subscriber extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function delete(string $subscriberId): array
     {
         return $this->httpLayer->delete(

@@ -6,6 +6,11 @@ class Field extends AbstractEndpoint
 {
     protected string $endpoint = 'fields';
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function create(array $params): array
     {
         return $this->httpLayer->post(
@@ -14,6 +19,11 @@ class Field extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function get(array $params = []): array
     {
         return $this->httpLayer->get(
@@ -21,6 +31,11 @@ class Field extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function update(string $fieldId, array $params): array
     {
         return $this->httpLayer->put(
@@ -29,6 +44,9 @@ class Field extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function delete(string $fieldId): array
     {
         return $this->httpLayer->delete(

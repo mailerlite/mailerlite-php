@@ -6,6 +6,11 @@ class Webhook extends AbstractEndpoint
 {
     protected string $endpoint = 'webhooks';
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function create(array $params): array
     {
         return $this->httpLayer->post(
@@ -14,6 +19,9 @@ class Webhook extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function find(string $webhookId): array
     {
         return $this->httpLayer->get(
@@ -21,6 +29,11 @@ class Webhook extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function get(array $params = []): array
     {
         return $this->httpLayer->get(
@@ -28,6 +41,11 @@ class Webhook extends AbstractEndpoint
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * 
+     * @return array<string, mixed>
+     */
     public function update(string $webhookId, array $params): array
     {
         return $this->httpLayer->put(
@@ -36,6 +54,9 @@ class Webhook extends AbstractEndpoint
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function delete(string $webhookId): array
     {
         return $this->httpLayer->delete(
