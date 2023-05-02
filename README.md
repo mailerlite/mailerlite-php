@@ -1,6 +1,7 @@
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/mailerlite/mailerlite-php.svg?style=flat-square)](https://packagist.org/packages/mailerlite/mailerlite-php)
-[![Total Downloads](https://img.shields.io/packagist/dt/mailerlite/mailerlite-php.svg?style=flat-square)](https://packagist.org/packages/mailerlite/mailerlite-php)
-![GitHub Actions](https://github.com/mailerlite/mailerlite-php/actions/workflows/main.yml/badge.svg)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/mailerlite/mailerlite-php.svg)](https://packagist.org/packages/mailerlite/mailerlite-php)
+[![Tests](https://github.com/mailerlite/mailerlite-php/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/mailerlite/mailerlite-php/actions/workflows/test.yml)
+[![PHPStan](https://github.com/mailerlite/mailerlite-php/actions/workflows/static.yml/badge.svg)](https://github.com/mailerlite/mailerlite-php/actions/workflows/static.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/mailerlite/mailerlite-php.svg)](https://packagist.org/packages/mailerlite/mailerlite-php)
 
 # Table of Contents
 

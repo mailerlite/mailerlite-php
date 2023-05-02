@@ -35,7 +35,8 @@
         "guzzlehttp/psr7": "^1.5.2",
         "http-interop/http-factory-guzzle": "^1.0",
         "php-http/guzzle7-adapter": "^0.1",
-        "friendsofphp/php-cs-fixer": "^2.18"
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "phpstan/phpstan": "^1.10"
     },
     "autoload": {
         "psr-4": {
@@ -48,6 +49,9 @@
         }
     },
     "scripts": {
+        "analyse": [
+            "@php vendor/bin/phpstan analyse --ansi"
+        ],
         "test": [
             "@php vendor/bin/phpunit tests/"
         ],

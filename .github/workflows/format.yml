@@ -1,4 +1,4 @@
-name: Build
+name: Code style
 
 on:
     push:
@@ -13,7 +13,7 @@ jobs:
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
-                php-versions: ['7.4','8.0']
+                php-versions: ['8.0']
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
 
         steps:
@@ -31,12 +31,13 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: vendor
-                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
+                  key: ${{ runner.os }}-php-cs-${{ hashFiles('**/composer.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-php-
+                      ${{ runner.os }}-php-cs-${{ matrix.php-versions }}-
+
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
               run: composer install --prefer-dist --no-progress --no-suggest
 
-            - name: Run test suite
-              run: composer run-script test
+            - name: Run PHP-CS-Fixer
+              run: composer run-script format --  --dry-run

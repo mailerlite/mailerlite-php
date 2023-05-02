@@ -15,9 +15,12 @@ class MailerLiteValidationException extends MailerLiteException
         ResponseInterface $response
     ) {
         $body = $response->getBody()->getContents();
+        /** @var array<string|int, mixed> $data */
         $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        /** @var string $message */
+        $message = $data['message'];
 
-        parent::__construct($data['message']);
+        parent::__construct($message);
 
         $this->request = $request;
         $this->response = $response;
