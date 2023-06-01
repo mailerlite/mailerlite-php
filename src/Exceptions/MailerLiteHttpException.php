@@ -23,6 +23,9 @@ class MailerLiteHttpException extends MailerLiteException implements RequestExce
             $response->getReasonPhrase()
         );
 
+        $this->request = $request;
+        $this->response = $response;
+
         parent::__construct($message, $response->getStatusCode());
     }
 
