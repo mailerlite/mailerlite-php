@@ -88,6 +88,18 @@ class GroupTest extends TestCase
         self::assertEquals("/api/groups/{$this->groupId}/subscribers", $request->getUri()->getPath());
     }
 
+    public function test_get_group_subscribers_pagination()
+    {
+        $this->groups->getSubscribers($this->groupId, [
+            'cursor' => 'next_page_cursor'
+        ]);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals("cursor=next_page_cursor", $request->getUri()->getQuery());
+    }
+
     public function test_assign_subscriber_to_group()
     {
         $subscriberId = '4567';

@@ -67,10 +67,10 @@ class Group extends AbstractEndpoint
     /**
      * @return array<string, mixed>
      */
-    public function getSubscribers(string $groupId): array
+    public function getSubscribers(string $groupId, array $params = []): array
     {
         return $this->httpLayer->get(
-            $this->buildUri($this->endpoint) . "/{$groupId}/subscribers"
+            $this->buildUri($this->endpoint . "/{$groupId}/subscribers", $params)
         );
     }
 
