@@ -65,6 +65,9 @@ class Group extends AbstractEndpoint
     }
 
     /**
+     * @param string $groupId
+     * @param array<string, mixed> $params
+     *
      * @return array<string, mixed>
      */
     public function getSubscribers(string $groupId, array $params = []): array
