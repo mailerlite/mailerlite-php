@@ -9,10 +9,10 @@ on:
 jobs:
     run:
 
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         strategy:
             matrix:
-                operating-system: [ubuntu-latest]
+                operating-system: [ubuntu-24.04]
                 php-versions: ['8.2']
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
 
