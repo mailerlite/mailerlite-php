@@ -96,7 +96,7 @@ class Campaign extends AbstractEndpoint
     public function getSubscriberActivity(string $campaignId, array $params): array
     {
         return $this->httpLayer->post(
-            $this->buildUri("{$this->endpoint}/{$campaignId}/subscriber-activity"),
+            $this->buildUri("{$this->endpoint}/{$campaignId}/reports/subscriber-activity"),
             $params
         );
     }
