@@ -108,6 +108,6 @@ class CampaignTest extends TestCase
         $request = $this->client->getLastRequest();
 
         self::assertEquals('POST', $request->getMethod());
-        self::assertEquals("/api/campaigns/{$this->campaignId}/subscriber-activity", $request->getUri()->getPath());
+        self::assertEquals("/api/campaigns/{$this->campaignId}/reports/subscriber-activity", $request->getUri()->getPath());
     }
 }
