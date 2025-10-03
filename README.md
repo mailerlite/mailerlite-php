@@ -53,7 +53,9 @@
       * [Delete](#webhook-delete)    
     * [Campaign language API](#campaign-language-read)
     * [Timezone API](#timezone-read)    
-    * [Batch API](#batch-send)           
+    * [Batch API](#batch-send)      
+* [Optional PSR transport (no BC break)](#optional-psr-transport-no-bc-break) 
+* [E-commerce (Products / Orders / Customers)](#e-commerce)    
 * [Testing](#testing)
 * [License](#license)
 
@@ -765,6 +767,65 @@ $response = $mailerLite->timezones->get();
 
 ## Batch API
 More information about request parameters on https://developers.mailerlite.com/docs/batching.html
+
+<a name="e-commerce"></a>
+## E-commerce (Products / Orders / Customers)
+
+E-commerce endpoints follow:
+```php
+/api/ecommerce/shops/{shopId}/...
+```
+`shopId` is provided per call (there is no separate `/shops` API).
+
+**Products**
+```php
+$res = $mailerLite->ecommerceProducts->create('YOUR_SHOP_ID', [
+    'title'    => 'Red T-shirt',
+    'price'    => 19.99,
+    'currency' => 'USD',
+]);
+
+$res = $mailerLite->ecommerceProducts->find('YOUR_SHOP_ID', 'PRODUCT_ID');
+
+$res = $mailerLite->ecommerceProducts->update('YOUR_SHOP_ID', 'PRODUCT_ID', [
+    'title' => 'New title',
+]);
+```
+**Orders**
+```php
+$res = $mailerLite->ecommerceOrders->create('YOUR_SHOP_ID', [
+   'order_id' => 'ORD-1001',
+]);
+
+$res = $mailerLite->ecommerceOrders->find('YOUR_SHOP_ID', 'ORD-1001');
+
+$res = $mailerLite->ecommerceOrders->update('YOUR_SHOP_ID', 'ORD-1001', [
+    'status' => 'paid',
+]);
+```
+**Customers**
+```php
+$res = $mailerLite->ecommerceCustomers->get('YOUR_SHOP_ID', ['limit' => 50]);
+$res = $mailerLite->ecommerceCustomers->create('YOUR_SHOP_ID', ['email' => 'user@example.com']);
+$res = $mailerLite->ecommerceCustomers->find('YOUR_SHOP_ID', 'CUSTOMER_ID');
+```
+## Optional PSR transport (no BC break)
+```php
+use MailerLite\MailerLite;
+use MailerLite\Http\Adapters\Psr17FactoryAggregate;
+use Nyholm\Psr7\Factory\Psr17Factory; 
+use GuzzleHttp\Client as GuzzleHttpClient; 
+$ml = new MailerLite(['api_key' => 'YOUR_API_KEY']);
+
+$psr17 = new Psr17Factory();
+$factories = new Psr17FactoryAggregate($psr17, $psr17);
+
+$httpClient = new GuzzleHttpClient();
+
+$ml->enablePsrTransport($httpClient, $factories, 'YOUR_API_KEY', 'https://connect.mailerlite.com');
+
+$ml->subscribers->create(['email' => 'subscriber@example.com']);
+```
 
 <a name="batch-send"></a>
 ### Send
