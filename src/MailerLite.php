@@ -3,6 +3,8 @@
 namespace MailerLite;
 
 use MailerLite\Common\HttpLayer;
+use MailerLite\Common\HttpLayerPsr;
+use MailerLite\Common\HttpLayerPsrBridge; // ← добавить
 use MailerLite\Endpoints\Automation;
 use MailerLite\Endpoints\Batch;
 use MailerLite\Endpoints\Campaign;
@@ -16,19 +18,12 @@ use MailerLite\Endpoints\Timezone;
 use MailerLite\Endpoints\Webhook;
 use MailerLite\Exceptions\MailerLiteException;
 
-/**
- * This is the PHP SDK for MailerLite
- */
 class MailerLite
 {
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     protected array $options;
 
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     protected static array $defaultOptions = [
         'host' => 'connect.mailerlite.com',
         'protocol' => 'https',
@@ -52,7 +47,7 @@ class MailerLite
     public Batch $batches;
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<string,mixed> $options
      */
     public function __construct(array $options = [], ?HttpLayer $httpLayer = null)
     {
@@ -62,8 +57,8 @@ class MailerLite
     }
 
     /**
-     * @param array<string, mixed> $options
-     */
+    * @param array<string,mixed> $options
+    */
     protected function setOptions(array $options): void
     {
         $this->options = self::$defaultOptions;
@@ -82,6 +77,18 @@ class MailerLite
     protected function setHttpLayer(?HttpLayer $httpLayer = null): void
     {
         $this->httpLayer = $httpLayer ?: new HttpLayer($this->options);
+    }
+
+    public function enablePsrTransport(
+        \MailerLite\Http\ClientInterface $client,
+        \MailerLite\Http\RequestFactoryInterface $requestFactory,
+        string $apiKey,
+        string $baseUrl = 'https://connect.mailerlite.com'
+    ): self {
+        $psr = new HttpLayerPsr($client, $requestFactory, $apiKey, $baseUrl);
+        $this->httpLayer = new HttpLayerPsrBridge($psr);
+        $this->setEndpoints();
+        return $this;
     }
 
     protected function setEndpoints(): void
