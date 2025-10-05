@@ -53,7 +53,8 @@
       * [Delete](#webhook-delete)    
     * [Campaign language API](#campaign-language-read)
     * [Timezone API](#timezone-read)    
-    * [Batch API](#batch-send)           
+    * [Batch API](#batch-send)      
+* [Optional PSR transport (no BC break)](#optional-psr-transport-no-bc-break)     
 * [Testing](#testing)
 * [License](#license)
 
@@ -765,6 +766,23 @@ $response = $mailerLite->timezones->get();
 
 ## Batch API
 More information about request parameters on https://developers.mailerlite.com/docs/batching.html
+## Optional PSR transport (no BC break)
+```php
+use MailerLite\MailerLite;
+use MailerLite\Http\Adapters\Psr17FactoryAggregate;
+use Nyholm\Psr7\Factory\Psr17Factory; 
+use GuzzleHttp\Client as GuzzleHttpClient; 
+$ml = new MailerLite(['api_key' => 'YOUR_API_KEY']);
+
+$psr17 = new Psr17Factory();
+$factories = new Psr17FactoryAggregate($psr17, $psr17);
+
+$httpClient = new GuzzleHttpClient();
+
+$ml->enablePsrTransport($httpClient, $factories, 'YOUR_API_KEY', 'https://connect.mailerlite.com');
+
+$ml->subscribers->create(['email' => 'subscriber@example.com']);
+```
 
 <a name="batch-send"></a>
 ### Send
