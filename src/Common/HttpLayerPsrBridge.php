@@ -7,8 +7,12 @@ use Psr\Http\Message\ResponseInterface;
 
 final class HttpLayerPsrBridge extends HttpLayer
 {
-    public function __construct(private HttpLayerPsr $psrLayer)
+   /** @var HttpLayerPsr */
+    private $psrLayer;
+
+    public function __construct(HttpLayerPsr $psrLayer)
     {
+        $this->psrLayer = $psrLayer;
     }
 
     /** @return array{status_code:int,headers:array<string,string[]>,body:mixed,response:ResponseInterface} */
@@ -43,14 +47,19 @@ final class HttpLayerPsrBridge extends HttpLayer
     {
         $method = strtoupper($method);
         $decodedBody = $this->decodeJsonBody($body);
-        
-        return match ($method) {
-            'GET'    => $this->get($uri, []),
-            'POST'   => $this->post($uri, $decodedBody),
-            'PUT'    => $this->put($uri, $decodedBody),
-            'DELETE' => $this->delete($uri, []),
-            default  => throw new MailerLiteException("Unsupported HTTP method: {$method}"),
-        };
+
+        switch ($method) {
+            case 'GET':
+                return $this->get($uri, []);
+            case 'POST':
+                return $this->post($uri, $decodedBody);
+            case 'PUT':
+                return $this->put($uri, $decodedBody);
+            case 'DELETE':
+                return $this->delete($uri, []);
+            default:
+                throw new MailerLiteException("Unsupported HTTP method: {$method}");
+        }
     }
 
     /**

@@ -7,11 +7,23 @@ use Psr\Http\Message\ResponseInterface;
 
 final class RetryingClient implements ClientInterface
 {
+    /** @var ClientInterface */
+    private $inner;
+
+    /** @var int */
+    private $maxAttempts;
+
+    /** @var int */
+    private $baseDelayMs;
+
     public function __construct(
-        private readonly ClientInterface $inner,
-        private readonly int $maxAttempts = 3,
-        private readonly int $baseDelayMs = 300
+        ClientInterface $inner,
+        int $maxAttempts = 3,
+        int $baseDelayMs = 300
     ) {
+        $this->inner = $inner;
+        $this->maxAttempts = $maxAttempts;
+        $this->baseDelayMs = $baseDelayMs;
     }
 
     public function sendRequest(RequestInterface $request): ResponseInterface

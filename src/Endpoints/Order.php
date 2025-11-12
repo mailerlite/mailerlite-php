@@ -17,19 +17,21 @@ final class Order extends AbstractEndpoint
     }
 
     /**
+     * @param string|int $orderId
      * @param array<string,mixed> $data
      * @return array<string,mixed>
      */
-    public function update(string $shopId, string|int $orderId, array $data): array
+    public function update(string $shopId, $orderId, array $data): array
     {
         $uri = $this->buildUri("ecommerce/shops/{$shopId}/orders/{$orderId}");
         return $this->httpLayer->put($uri, $data);
     }
 
     /**
+     * @param string|int $orderId
      * @return array<string,mixed>
      */
-    public function find(string $shopId, string|int $orderId): array
+    public function find(string $shopId, $orderId): array
     {
         $uri = $this->buildUri("ecommerce/shops/{$shopId}/orders/{$orderId}");
         return $this->httpLayer->get($uri);

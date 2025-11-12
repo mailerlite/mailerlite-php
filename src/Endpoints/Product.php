@@ -18,19 +18,21 @@ final class Product extends AbstractEndpoint
     }
 
     /**
+     * @param string|int $productId
      * @param array<string,mixed> $data
      * @return array<string,mixed>
      */
-    public function update(string $shopId, string|int $productId, array $data): array
+    public function update(string $shopId, $productId, array $data): array
     {
         $uri = $this->buildUri("ecommerce/shops/{$shopId}/products/{$productId}");
         return $this->httpLayer->put($uri, $data);
     }
 
-    /**
+   /**
+     * @param string|int $productId
      * @return array<string,mixed>
      */
-    public function find(string $shopId, string|int $productId): array
+    public function find(string $shopId, $productId): array
     {
         $uri = $this->buildUri("ecommerce/shops/{$shopId}/products/{$productId}");
         return $this->httpLayer->get($uri);

@@ -9,17 +9,39 @@ use Psr\Http\Message\ResponseInterface;
 
 final class HttpLayerPsr
 {
+    /** @var ClientInterface */
+    private $client;
+
+    /** @var RequestFactoryInterface */
+    private $requestFactory;
+
+    /** @var string */
+    private $apiKey;
+
+    /** @var string */
+    private $baseUrl;
+
+    /** @var array<string,string|string[]> */
+    private $defaultHeaders;
+
+    /**
+     * @param array<string,string|string[]> $defaultHeaders
+     */
     public function __construct(
-        private ClientInterface $client,
-        private RequestFactoryInterface $requestFactory,
-        private string $apiKey,
-        private string $baseUrl = 'https://connect.mailerlite.com',
-        /** @var array<string,string|string[]> */
-        private array $defaultHeaders = [
+        ClientInterface $client,
+        RequestFactoryInterface $requestFactory,
+        string $apiKey,
+        string $baseUrl = 'https://connect.mailerlite.com',
+        array $defaultHeaders = [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
         ]
     ) {
+        $this->client = $client;
+        $this->requestFactory = $requestFactory;
+        $this->apiKey = $apiKey;
+        $this->baseUrl = $baseUrl;
+        $this->defaultHeaders = $defaultHeaders;
     }
 
     /**

@@ -26,10 +26,11 @@ final class Customer extends AbstractEndpoint
         return $this->httpLayer->post($uri, $data);
     }
 
-    /**
+     /**
+     * @param string|int $customerId
      * @return array<string,mixed>
      */
-    public function find(string $shopId, string|int $customerId): array
+    public function find(string $shopId, $customerId): array
     {
         $uri = $this->buildUri("ecommerce/shops/{$shopId}/customers/{$customerId}");
         return $this->httpLayer->get($uri);

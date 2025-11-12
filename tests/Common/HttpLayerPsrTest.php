@@ -20,10 +20,10 @@ final class HttpLayerPsrTest extends TestCase
         $factories = new Psr17FactoryAggregate($psr17, $psr17);
 
         $layer = new HttpLayerPsr(
-            client: $fake,
-            requestFactory: $factories,
-            apiKey: 'TEST_KEY',
-            baseUrl: 'https://connect.mailerlite.com'
+            $fake,
+            $factories,
+            'TEST_KEY',
+            'https://connect.mailerlite.com'
         );
 
         $resp = $layer->post('api/subscribers', ['email' => 'a@b.com']);
@@ -43,9 +43,9 @@ final class HttpLayerPsrTest extends TestCase
         $factories = new Psr17FactoryAggregate($psr17, $psr17);
 
         $layer = new HttpLayerPsr(
-            client: $fake,
-            requestFactory: $factories,
-            apiKey: 'TEST_KEY'
+            $fake,
+            $factories,
+            'TEST_KEY'
         );
 
         $layer->delete('api/subscribers/123');

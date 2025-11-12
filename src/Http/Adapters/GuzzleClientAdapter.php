@@ -9,8 +9,12 @@ use Psr\Http\Message\ResponseInterface;
 
 final class GuzzleClientAdapter implements ClientInterface
 {
-    public function __construct(private Psr18Client $client)
+      /** @var Psr18Client */
+    private $client;
+
+    public function __construct(Psr18Client $client)
     {
+        $this->client = $client;
     }
 
     public function sendRequest(RequestInterface $request): ResponseInterface

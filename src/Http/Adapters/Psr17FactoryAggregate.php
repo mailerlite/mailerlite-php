@@ -11,10 +11,18 @@ use Psr\Http\Message\StreamInterface;
 
 final class Psr17FactoryAggregate implements RequestFactoryInterface, StreamFactoryInterface
 {
+   /** @var Psr17RequestFactory */
+    private $requestFactory;
+
+    /** @var Psr17StreamFactory */
+    private $streamFactory;
+
     public function __construct(
-        private Psr17RequestFactory $requestFactory,
-        private Psr17StreamFactory $streamFactory
+        Psr17RequestFactory $requestFactory,
+        Psr17StreamFactory $streamFactory
     ) {
+        $this->requestFactory = $requestFactory;
+        $this->streamFactory  = $streamFactory;
     }
 
     /**

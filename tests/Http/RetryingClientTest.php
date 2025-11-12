@@ -18,7 +18,7 @@ final class RetryingClientTest extends TestCase
             new Response(200, [], '{"ok":true}'),
         ];
 
-        $client = new RetryingClient($fake, maxAttempts: 3, baseDelayMs: 1);
+        $client = new RetryingClient($fake, 3, 1);
         $req = (new Psr17Factory())->createRequest('GET', 'https://x');
 
         $resp = $client->sendRequest($req);
@@ -35,7 +35,7 @@ final class RetryingClientTest extends TestCase
             new Response(200, [], 'ok'),
         ];
 
-        $client = new RetryingClient($fake, maxAttempts: 3, baseDelayMs: 1);
+        $client = new RetryingClient($fake, 3, 1);
         $req = (new Psr17Factory())->createRequest('GET', 'https://x');
 
         $resp = $client->sendRequest($req);
@@ -53,7 +53,7 @@ final class RetryingClientTest extends TestCase
             new Response(500, [], 'e3'),
         ];
 
-        $client = new RetryingClient($fake, maxAttempts: 3, baseDelayMs: 1);
+        $client = new RetryingClient($fake, 3, 1);
         $req = (new Psr17Factory())->createRequest('GET', 'https://x');
 
         $resp = $client->sendRequest($req);
