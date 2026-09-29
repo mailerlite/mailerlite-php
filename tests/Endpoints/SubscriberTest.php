@@ -77,4 +77,14 @@ class SubscriberTest extends TestCase
         self::assertEquals('DELETE', $request->getMethod());
         self::assertEquals("/api/subscribers/{$this->subscriberId}", $request->getUri()->getPath());
     }
+
+    public function test_forget()
+    {
+        $this->subscribers->forget($this->subscriberId);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('POST', $request->getMethod());
+        self::assertEquals("/api/subscribers/{$this->subscriberId}/forget", $request->getUri()->getPath());
+    }
 }
