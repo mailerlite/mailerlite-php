@@ -81,8 +81,12 @@ it means that all the discovery strategies have failed. Most likely, your projec
 To resolve this you may run
 
 ```bash
-$ composer require php-http/curl-client guzzlehttp/psr7 php-http/message
+$ composer require php-http/curl-client:^2.0 guzzlehttp/psr7 php-http/message
 ```
+
+If you get a fatal error saying `Declaration of Http\Client\Curl\Client::sendRequest(...) must be compatible with Psr\Http\Client\ClientInterface::sendRequest(...)`,
+an old `php-http/curl-client` 1.x is being loaded. Version 1.x does not implement PSR-18, so upgrade it to `^2.0`
+and make sure only one Composer autoloader (`vendor/autoload.php`) is loaded in your project.
 
 <a name="usage"></a>
 

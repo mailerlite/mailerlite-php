@@ -31,6 +31,7 @@
     },
      "suggest": {
     "guzzlehttp/guzzle": "^7.8 || ^8.0",
+    "php-http/curl-client": "^2.0",
     "nyholm/psr7": "^1.8",
     "symfony/http-client": "^7.0"
   },
