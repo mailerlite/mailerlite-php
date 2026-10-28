@@ -7,9 +7,12 @@ use MailerLite\Common\HttpLayerPsr;
 use MailerLite\Common\HttpLayerPsrBridge;
 use MailerLite\Endpoints\Automation;
 use MailerLite\Endpoints\Batch;
+use MailerLite\Endpoints\BrandStyle;
 use MailerLite\Endpoints\Campaign;
 use MailerLite\Endpoints\CampaignLanguage;
+use MailerLite\Endpoints\Email;
 use MailerLite\Endpoints\Field;
+use MailerLite\Endpoints\File;
 use MailerLite\Endpoints\Form;
 use MailerLite\Endpoints\Group;
 use MailerLite\Endpoints\Segment;
@@ -42,6 +45,9 @@ class MailerLite
 
     public Subscriber $subscribers;
     public Campaign $campaigns;
+    public Email $emails;
+    public BrandStyle $brandStyles;
+    public File $files;
     public Group  $groups;
     public Segment $segments;
     public Field $fields;
@@ -107,6 +113,9 @@ class MailerLite
     {
         $this->subscribers = new Subscriber($this->httpLayer, $this->options);
         $this->campaigns = new Campaign($this->httpLayer, $this->options);
+        $this->emails = new Email($this->httpLayer, $this->options);
+        $this->brandStyles = new BrandStyle($this->httpLayer, $this->options);
+        $this->files = new File($this->httpLayer, $this->options);
         $this->forms = new Form($this->httpLayer, $this->options);
         $this->fields = new Field($this->httpLayer, $this->options);
         $this->segments = new Segment($this->httpLayer, $this->options);

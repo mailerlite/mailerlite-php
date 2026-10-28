@@ -21,6 +21,12 @@
         * [Schedule](#schedule-campaign)
         * [Cancel](#cancel-campaign)
         * [Subscriber activity](#campaign-subscriber-activity)
+    * [Email API](#email)
+        * [Read](#read-email)
+        * [Read a block](#read-email-block)
+        * [Versions](#email-versions)
+    * [Brand styles API](#brand-styles-read)
+    * [Files API](#files-read)
     * [Group API](#group)
         * [Create](#group-create)
         * [Update](#group-update)
@@ -339,6 +345,94 @@ $data = [
 ];
 
 $response = $mailerLite->campaigns->getSubscriberActivity($campaignId, $data);
+```
+
+<a name="email"></a>
+## Email API
+
+<a name="read-email"></a>
+
+### Read
+
+Single record
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$response = $mailerLite->emails->find($emailId);
+```
+
+Rendered HTML
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$response = $mailerLite->emails->getHtml($emailId);
+
+$html = $response['body']; // raw HTML string, not an array
+```
+
+<a name="read-email-block"></a>
+
+### Read a block
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+$blockId = '456';
+
+$response = $mailerLite->emails->findBlock($emailId, $blockId);
+```
+
+<a name="email-versions"></a>
+
+### Versions
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$response = $mailerLite->emails->getVersions($emailId);
+```
+
+## Brand styles API
+
+<a name="brand-styles-read"></a>
+### Read
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->brandStyles->get();
+```
+
+## Files API
+
+<a name="files-read"></a>
+### Read
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->files->get();
 ```
 
 <a name="group"></a>
