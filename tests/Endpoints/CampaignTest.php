@@ -38,6 +38,20 @@ class CampaignTest extends TestCase
         self::assertEquals('/api/campaigns', $request->getUri()->getPath());
     }
 
+    public function test_create_simple_editor_email()
+    {
+        $this->campaigns->create([
+            'emails' => [
+                ['editor' => 'simple', 'template_id' => '42'],
+            ],
+        ]);
+
+        $body = json_decode((string) $this->client->getLastRequest()->getBody(), true);
+
+        self::assertEquals('simple', $body['emails'][0]['editor']);
+        self::assertEquals('42', $body['emails'][0]['template_id']);
+    }
+
     public function test_find()
     {
         $this->campaigns->find($this->campaignId);

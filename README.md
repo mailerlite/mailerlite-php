@@ -25,6 +25,11 @@
         * [Read](#read-email)
         * [Read a block](#read-email-block)
         * [Versions](#email-versions)
+        * [Create a block](#create-email-block)
+        * [Move a block](#move-email-block)
+        * [Validate a block](#validate-email-block)
+        * [Validate settings](#validate-email-settings)
+        * [Save as template](#create-email-template)
     * [Brand styles API](#brand-styles-read)
     * [Files API](#files-read)
     * [Group API](#group)
@@ -230,6 +235,30 @@ $data = [
 $response = $mailerLite->campaigns->create($data);
 ```
 
+To create an email for the simple editor, set `editor` and, optionally, a `template_id` to start from:
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    'type' => 'regular',
+    'name' => 'My new campaign',
+    'emails' => [
+        [
+            'subject' => 'My new email',
+            'from_name' => 'me',
+            'from' => 'me@example.com',
+            'editor' => 'simple',
+            'template_id' => '123',
+        ]
+    ],
+];
+
+$response = $mailerLite->campaigns->create($data);
+```
+
 <a name="read-campaign"></a>
 
 ### Read
@@ -407,6 +436,122 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $emailId = '123';
 
 $response = $mailerLite->emails->getVersions($emailId);
+```
+
+Save the current content as a new version
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$response = $mailerLite->emails->createVersion($emailId);
+```
+
+Restore a version
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+$versionId = '789';
+
+$response = $mailerLite->emails->restoreVersion($emailId, $versionId);
+```
+
+<a name="create-email-block"></a>
+
+### Create a block
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$data = [
+    // block fields, see the API docs
+];
+
+$response = $mailerLite->emails->createBlock($emailId, $data);
+```
+
+<a name="move-email-block"></a>
+
+### Move a block
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+$blockId = '456';
+
+$data = [
+    // new position, see the API docs
+];
+
+$response = $mailerLite->emails->moveBlock($emailId, $blockId, $data);
+```
+
+<a name="validate-email-block"></a>
+
+### Validate a block
+
+Checks a block without saving it, so no email ID is needed.
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$data = [
+    // block fields, see the API docs
+];
+
+$response = $mailerLite->emails->validateBlock($data);
+```
+
+<a name="validate-email-settings"></a>
+
+### Validate settings
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$data = [
+    // settings fields, see the API docs
+];
+
+$response = $mailerLite->emails->validateSettings($emailId, $data);
+```
+
+<a name="create-email-template"></a>
+
+### Save as template
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$data = [
+    // template fields, see the API docs
+];
+
+$response = $mailerLite->emails->createTemplate($emailId, $data);
 ```
 
 ## Brand styles API
