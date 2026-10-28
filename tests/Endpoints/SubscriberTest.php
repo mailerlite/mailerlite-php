@@ -87,4 +87,26 @@ class SubscriberTest extends TestCase
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/subscribers/{$this->subscriberId}/forget", $request->getUri()->getPath());
     }
+
+    public function test_get_ecommerce_stats()
+    {
+        $this->subscribers->getEcommerceStats($this->subscriberId, ['shop_id' => '1']);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals("/api/subscribers/{$this->subscriberId}/reports/ecommerce", $request->getUri()->getPath());
+        self::assertEquals('shop_id=1', $request->getUri()->getQuery());
+    }
+
+    public function test_get_ecommerce_orders()
+    {
+        $this->subscribers->getEcommerceOrders($this->subscriberId, ['shop_id' => '1']);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals("/api/subscribers/{$this->subscriberId}/reports/ecommerce/orders", $request->getUri()->getPath());
+        self::assertEquals('shop_id=1', $request->getUri()->getQuery());
+    }
 }
