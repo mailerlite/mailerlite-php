@@ -140,6 +140,26 @@ class EmailTest extends TestCase
         self::assertEquals("/api/emails/{$this->emailId}/versions/789/restore", $request->getUri()->getPath());
     }
 
+    public function test_update_block()
+    {
+        $this->emails->updateBlock($this->emailId, $this->blockId, []);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('PATCH', $request->getMethod());
+        self::assertEquals("/api/emails/{$this->emailId}/blocks/{$this->blockId}", $request->getUri()->getPath());
+    }
+
+    public function test_update_settings()
+    {
+        $this->emails->updateSettings($this->emailId, []);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('PATCH', $request->getMethod());
+        self::assertEquals("/api/emails/{$this->emailId}/settings", $request->getUri()->getPath());
+    }
+
     public function test_delete_block()
     {
         $this->emails->deleteBlock($this->emailId, $this->blockId);

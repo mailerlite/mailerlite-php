@@ -138,6 +138,32 @@ class Email extends AbstractEndpoint
     }
 
     /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function updateBlock(string $emailId, string $blockId, array $params): array
+    {
+        return $this->httpLayer->patch(
+            $this->buildUri("{$this->endpoint}/{$emailId}/blocks/{$blockId}"),
+            $params
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function updateSettings(string $emailId, array $params): array
+    {
+        return $this->httpLayer->patch(
+            $this->buildUri("{$this->endpoint}/{$emailId}/settings"),
+            $params
+        );
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function deleteBlock(string $emailId, string $blockId): array

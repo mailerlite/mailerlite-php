@@ -26,9 +26,11 @@
         * [Read a block](#read-email-block)
         * [Versions](#email-versions)
         * [Create a block](#create-email-block)
+        * [Update a block](#update-email-block)
         * [Move a block](#move-email-block)
         * [Delete a block](#delete-email-block)
         * [Validate a block](#validate-email-block)
+        * [Update settings](#update-email-settings)
         * [Validate settings](#validate-email-settings)
         * [Save as template](#create-email-template)
     * [Brand styles API](#brand-styles-read)
@@ -482,6 +484,25 @@ $data = [
 $response = $mailerLite->emails->createBlock($emailId, $data);
 ```
 
+<a name="update-email-block"></a>
+
+### Update a block
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+$blockId = '456';
+
+$data = [
+    // fields to change, see the API docs
+];
+
+$response = $mailerLite->emails->updateBlock($emailId, $blockId, $data);
+```
+
 <a name="move-email-block"></a>
 
 ### Move a block
@@ -532,6 +553,24 @@ $data = [
 ];
 
 $response = $mailerLite->emails->validateBlock($data);
+```
+
+<a name="update-email-settings"></a>
+
+### Update settings
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+
+$data = [
+    // settings to change, see the API docs
+];
+
+$response = $mailerLite->emails->updateSettings($emailId, $data);
 ```
 
 <a name="validate-email-settings"></a>
