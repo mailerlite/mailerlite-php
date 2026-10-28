@@ -36,6 +36,12 @@ final class HttpLayerPsrBridge extends HttpLayer
     }
 
     /** @return array{status_code:int,headers:array<string,string[]>,body:mixed,response:ResponseInterface} */
+    public function patch(string $uri, array $body = []): array
+    {
+        return $this->executeAndConvert(fn () => $this->psrLayer->patch($uri, $body));
+    }
+
+    /** @return array{status_code:int,headers:array<string,string[]>,body:mixed,response:ResponseInterface} */
     public function delete(string $uri, array $body = []): array
     {
         // Note: $body parameter is ignored for DELETE requests as per HTTP semantics
@@ -55,6 +61,8 @@ final class HttpLayerPsrBridge extends HttpLayer
                 return $this->post($uri, $decodedBody);
             case 'PUT':
                 return $this->put($uri, $decodedBody);
+            case 'PATCH':
+                return $this->patch($uri, $decodedBody);
             case 'DELETE':
                 return $this->delete($uri, []);
             default:

@@ -81,6 +81,16 @@ class HttpLayer
      *
      * @return array<string, mixed>
      */
+    public function patch(string $uri, array $body = []): array
+    {
+        return $this->callMethod('PATCH', $uri, $body);
+    }
+
+    /**
+     * @param array<string, mixed> $body
+     *
+     * @return array<string, mixed>
+     */
     public function delete(string $uri, array $body = []): array
     {
         return $this->callMethod('DELETE', $uri, $body);

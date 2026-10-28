@@ -82,6 +82,19 @@ final class HttpLayerPsr
         return $res;
     }
 
+    /**
+     * @param array<mixed> $payload
+     */
+    public function patch(string $path, array $payload = []): ResponseInterface
+    {
+        $uri = $this->buildUri($path);
+        $body = $this->encodeJsonBody($payload);
+        $req = $this->requestFactory->create('PATCH', $uri, $this->headers(), $body);
+        $res = $this->client->sendRequest($req);
+        HttpErrorMapper::throwIfError($res);
+        return $res;
+    }
+
     public function delete(string $path): ResponseInterface
     {
         $uri = $this->buildUri($path);

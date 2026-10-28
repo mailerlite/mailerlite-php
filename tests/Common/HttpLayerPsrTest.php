@@ -4,6 +4,7 @@ namespace MailerLite\Tests\Common;
 
 use GuzzleHttp\Psr7\Response;
 use MailerLite\Common\HttpLayerPsr;
+use MailerLite\Common\HttpLayerPsrBridge;
 use MailerLite\Http\Adapters\Psr17FactoryAggregate;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
@@ -30,6 +31,47 @@ final class HttpLayerPsrTest extends TestCase
 
         $this->assertSame(200, $resp->getStatusCode());
         $this->assertSame('{"ok":true}', (string)$resp->getBody());
+    }
+
+    public function test_patch_ok(): void
+    {
+        $fake = new FakeClient();
+        $fake->queue = [ new Response(200, [], '{"ok":true}') ];
+
+        $psr17 = new Psr17Factory();
+        $factories = new Psr17FactoryAggregate($psr17, $psr17);
+
+        $layer = new HttpLayerPsr(
+            $fake,
+            $factories,
+            'TEST_KEY'
+        );
+
+        $resp = $layer->patch('api/emails/123/settings', ['subject' => 'Hi']);
+
+        $this->assertSame(200, $resp->getStatusCode());
+        $this->assertSame('PATCH', $fake->lastRequest->getMethod());
+        $this->assertSame('{"subject":"Hi"}', (string)$fake->lastRequest->getBody());
+    }
+
+    public function test_bridge_routes_patch(): void
+    {
+        $fake = new FakeClient();
+        $fake->queue = [
+            new Response(200, ['Content-Type' => 'application/json'], '{"ok":true}'),
+            new Response(200, ['Content-Type' => 'application/json'], '{"ok":true}'),
+        ];
+
+        $psr17 = new Psr17Factory();
+        $factories = new Psr17FactoryAggregate($psr17, $psr17);
+
+        $bridge = new HttpLayerPsrBridge(new HttpLayerPsr($fake, $factories, 'TEST_KEY'));
+
+        $bridge->patch('api/emails/123/settings', ['subject' => 'Hi']);
+        $this->assertSame('PATCH', $fake->lastRequest->getMethod());
+
+        $bridge->request('PATCH', 'api/emails/123/settings', '{"subject":"Hi"}');
+        $this->assertSame('PATCH', $fake->lastRequest->getMethod());
     }
 
     public function test_delete_404_maps_to_exception(): void
