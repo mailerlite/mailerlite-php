@@ -136,4 +136,14 @@ class Email extends AbstractEndpoint
             []
         );
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function deleteBlock(string $emailId, string $blockId): array
+    {
+        return $this->httpLayer->delete(
+            $this->buildUri("{$this->endpoint}/{$emailId}/blocks/{$blockId}")
+        );
+    }
 }

@@ -13,6 +13,7 @@ class EmailTest extends TestCase
     protected Email $emails;
     protected ResponseInterface $response;
     protected string $emailId;
+    protected string $blockId;
 
     protected function setUp(): void
     {
@@ -22,6 +23,7 @@ class EmailTest extends TestCase
 
         $this->emails = new Email(new HttpLayer(self::OPTIONS, $this->client), self::OPTIONS);
         $this->emailId = '123';
+        $this->blockId = '456';
 
         $this->response = $this->createMock(ResponseInterface::class);
         $this->response->method('getStatusCode')->willReturn(200);
@@ -50,12 +52,12 @@ class EmailTest extends TestCase
 
     public function test_find_block()
     {
-        $this->emails->findBlock($this->emailId, '456');
+        $this->emails->findBlock($this->emailId, $this->blockId);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('GET', $request->getMethod());
-        self::assertEquals("/api/emails/{$this->emailId}/blocks/456", $request->getUri()->getPath());
+        self::assertEquals("/api/emails/{$this->emailId}/blocks/{$this->blockId}", $request->getUri()->getPath());
     }
 
     public function test_get_versions()
@@ -80,12 +82,12 @@ class EmailTest extends TestCase
 
     public function test_move_block()
     {
-        $this->emails->moveBlock($this->emailId, '456', []);
+        $this->emails->moveBlock($this->emailId, $this->blockId, []);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('POST', $request->getMethod());
-        self::assertEquals("/api/emails/{$this->emailId}/blocks/456/move", $request->getUri()->getPath());
+        self::assertEquals("/api/emails/{$this->emailId}/blocks/{$this->blockId}/move", $request->getUri()->getPath());
     }
 
     public function test_validate_block()
@@ -136,5 +138,15 @@ class EmailTest extends TestCase
 
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/emails/{$this->emailId}/versions/789/restore", $request->getUri()->getPath());
+    }
+
+    public function test_delete_block()
+    {
+        $this->emails->deleteBlock($this->emailId, $this->blockId);
+
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('DELETE', $request->getMethod());
+        self::assertEquals("/api/emails/{$this->emailId}/blocks/{$this->blockId}", $request->getUri()->getPath());
     }
 }

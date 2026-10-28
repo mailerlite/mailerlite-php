@@ -27,6 +27,7 @@
         * [Versions](#email-versions)
         * [Create a block](#create-email-block)
         * [Move a block](#move-email-block)
+        * [Delete a block](#delete-email-block)
         * [Validate a block](#validate-email-block)
         * [Validate settings](#validate-email-settings)
         * [Save as template](#create-email-template)
@@ -498,6 +499,21 @@ $data = [
 ];
 
 $response = $mailerLite->emails->moveBlock($emailId, $blockId, $data);
+```
+
+<a name="delete-email-block"></a>
+
+### Delete a block
+
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$emailId = '123';
+$blockId = '456';
+
+$response = $mailerLite->emails->deleteBlock($emailId, $blockId);
 ```
 
 <a name="validate-email-block"></a>
