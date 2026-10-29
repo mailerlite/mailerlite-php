@@ -14,6 +14,7 @@ class EmailTest extends TestCase
     protected ResponseInterface $response;
     protected string $emailId;
     protected string $blockId;
+    protected array $params;
 
     protected function setUp(): void
     {
@@ -24,6 +25,7 @@ class EmailTest extends TestCase
         $this->emails = new Email(new HttpLayer(self::OPTIONS, $this->client), self::OPTIONS);
         $this->emailId = '123';
         $this->blockId = '456';
+        $this->params = ['name' => 'Test'];
 
         $this->response = $this->createMock(ResponseInterface::class);
         $this->response->method('getStatusCode')->willReturn(200);
@@ -72,52 +74,57 @@ class EmailTest extends TestCase
 
     public function test_create_block()
     {
-        $this->emails->createBlock($this->emailId, []);
+        $this->emails->createBlock($this->emailId, $this->params);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/emails/{$this->emailId}/blocks", $request->getUri()->getPath());
+        self::assertEquals($this->params, json_decode((string) $request->getBody(), true));
     }
 
     public function test_move_block()
     {
-        $this->emails->moveBlock($this->emailId, $this->blockId, []);
+        $this->emails->moveBlock($this->emailId, $this->blockId, $this->params);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/emails/{$this->emailId}/blocks/{$this->blockId}/move", $request->getUri()->getPath());
+        self::assertEquals($this->params, json_decode((string) $request->getBody(), true));
     }
 
     public function test_validate_block()
     {
-        $this->emails->validateBlock([]);
+        $this->emails->validateBlock($this->params);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals('/api/emails/blocks/validate', $request->getUri()->getPath());
+        self::assertEquals($this->params, json_decode((string) $request->getBody(), true));
     }
 
     public function test_validate_settings()
     {
-        $this->emails->validateSettings($this->emailId, []);
+        $this->emails->validateSettings($this->emailId, $this->params);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/emails/{$this->emailId}/settings/validate", $request->getUri()->getPath());
+        self::assertEquals($this->params, json_decode((string) $request->getBody(), true));
     }
 
     public function test_create_template()
     {
-        $this->emails->createTemplate($this->emailId, []);
+        $this->emails->createTemplate($this->emailId, $this->params);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/emails/{$this->emailId}/templates", $request->getUri()->getPath());
+        self::assertEquals($this->params, json_decode((string) $request->getBody(), true));
     }
 
     public function test_create_version()
@@ -142,22 +149,24 @@ class EmailTest extends TestCase
 
     public function test_update_block()
     {
-        $this->emails->updateBlock($this->emailId, $this->blockId, []);
+        $this->emails->updateBlock($this->emailId, $this->blockId, $this->params);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('PATCH', $request->getMethod());
         self::assertEquals("/api/emails/{$this->emailId}/blocks/{$this->blockId}", $request->getUri()->getPath());
+        self::assertEquals($this->params, json_decode((string) $request->getBody(), true));
     }
 
     public function test_update_settings()
     {
-        $this->emails->updateSettings($this->emailId, []);
+        $this->emails->updateSettings($this->emailId, $this->params);
 
         $request = $this->client->getLastRequest();
 
         self::assertEquals('PATCH', $request->getMethod());
         self::assertEquals("/api/emails/{$this->emailId}/settings", $request->getUri()->getPath());
+        self::assertEquals($this->params, json_decode((string) $request->getBody(), true));
     }
 
     public function test_delete_block()

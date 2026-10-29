@@ -69,9 +69,11 @@ final class HttpLayerPsrTest extends TestCase
 
         $bridge->patch('api/emails/123/settings', ['subject' => 'Hi']);
         $this->assertSame('PATCH', $fake->lastRequest->getMethod());
+        $this->assertSame('{"subject":"Hi"}', (string)$fake->lastRequest->getBody());
 
         $bridge->request('PATCH', 'api/emails/123/settings', '{"subject":"Hi"}');
         $this->assertSame('PATCH', $fake->lastRequest->getMethod());
+        $this->assertSame('{"subject":"Hi"}', (string)$fake->lastRequest->getBody());
     }
 
     public function test_delete_404_maps_to_exception(): void
