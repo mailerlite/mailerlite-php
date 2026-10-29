@@ -110,4 +110,24 @@ class CampaignTest extends TestCase
         self::assertEquals('POST', $request->getMethod());
         self::assertEquals("/api/campaigns/{$this->campaignId}/reports/subscriber-activity", $request->getUri()->getPath());
     }
+
+    public function test_get_ecommerce_stats()
+    {
+        $this->campaigns->getEcommerceStats($this->campaignId, ['shop_id' => '1']);
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals("/api/campaigns/{$this->campaignId}/reports/ecommerce", $request->getUri()->getPath());
+        self::assertEquals('shop_id=1', $request->getUri()->getQuery());
+    }
+
+    public function test_get_ecommerce_orders()
+    {
+        $this->campaigns->getEcommerceOrders($this->campaignId, ['shop_id' => '1']);
+        $request = $this->client->getLastRequest();
+
+        self::assertEquals('GET', $request->getMethod());
+        self::assertEquals("/api/campaigns/{$this->campaignId}/reports/ecommerce/orders", $request->getUri()->getPath());
+        self::assertEquals('shop_id=1', $request->getUri()->getQuery());
+    }
 }

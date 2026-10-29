@@ -38,25 +38,25 @@
         * [Create](#field-create)
         * [Update](#field-update)
         * [Read](#field-read)
-        * [Delete](#field-delete)   
+        * [Delete](#field-delete)
     * [Form API](#form)
       * [Update](#form-update)
       * [Read](#form-read)
-      * [Delete](#form-delete)    
-      * [Signups](#form-subscribers)  
+      * [Delete](#form-delete)
+      * [Signups](#form-subscribers)
     * [Automation API](#automation)
       * [Read](#automation-read)
-      * [Activity](#automation-activity)  
+      * [Activity](#automation-activity)
     * [Webhook API](#webhook)
       * [Create](#webhook-create)
       * [Update](#webhook-update)
       * [Read](#webhook-read)
-      * [Delete](#webhook-delete)    
+      * [Delete](#webhook-delete)
     * [Campaign language API](#campaign-language-read)
-    * [Timezone API](#timezone-read)    
-    * [Batch API](#batch-send)      
-* [Optional PSR transport (no BC break)](#optional-psr-transport-no-bc-break) 
-* [E-commerce (Products / Orders / Customers)](#e-commerce)    
+    * [Timezone API](#timezone-read)
+    * [Batch API](#batch-send)
+* [Optional PSR transport (no BC break)](#optional-psr-transport-no-bc-break)
+* [E-commerce](#e-commerce)
 * [Testing](#testing)
 * [License](#license)
 
@@ -335,7 +335,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $campaignId = '123';
 $data = [
-    'type' => 'opened', 
+    'type' => 'opened',
 ];
 
 $response = $mailerLite->campaigns->getSubscriberActivity($campaignId, $data);
@@ -791,16 +791,33 @@ $response = $mailerLite->timezones->get();
 More information about request parameters on https://developers.mailerlite.com/docs/batching.html
 
 <a name="e-commerce"></a>
-## E-commerce (Products / Orders / Customers)
+## E-commerce
 
 E-commerce endpoints follow:
 ```php
 /api/ecommerce/shops/{shopId}/...
 ```
-`shopId` is provided per call (there is no separate `/shops` API).
+`shopId` is provided per call.
+
+**Shops**
+```php
+$res = $mailerLite->ecommerceShops->get();
+$res = $mailerLite->ecommerceShops->find('YOUR_SHOP_ID');
+$res = $mailerLite->ecommerceShops->create(['name' => 'My shop', 'url' => 'https://shop.example.com', 'currency' => 'EUR']);
+$res = $mailerLite->ecommerceShops->update('YOUR_SHOP_ID', ['name' => 'New name']);
+$res = $mailerLite->ecommerceShops->delete('YOUR_SHOP_ID');
+```
 
 **Products**
 ```php
+$res = $mailerLite->ecommerceProducts->get('YOUR_SHOP_ID', [
+    'filter' => ['enabled' => 'true', 'category' => 'CATEGORY_ID'],
+    'sort'   => '-created_at',
+]);
+$res = $mailerLite->ecommerceProducts->delete('YOUR_SHOP_ID', 'PRODUCT_ID');
+$res = $mailerLite->ecommerceProducts->changeStatus('YOUR_SHOP_ID', 'PRODUCT_ID', false);
+$res = $mailerLite->ecommerceProducts->assignCategories('YOUR_SHOP_ID', 'PRODUCT_ID', ['CATEGORY_ID'], true);
+
 $res = $mailerLite->ecommerceProducts->create('YOUR_SHOP_ID', [
     'title'    => 'Red T-shirt',
     'price'    => 19.99,
@@ -813,8 +830,37 @@ $res = $mailerLite->ecommerceProducts->update('YOUR_SHOP_ID', 'PRODUCT_ID', [
     'title' => 'New title',
 ]);
 ```
+**Product variants**
+```php
+$res = $mailerLite->ecommerceProductVariants->get('YOUR_SHOP_ID', 'PRODUCT_ID');
+$res = $mailerLite->ecommerceProductVariants->sync('YOUR_SHOP_ID', 'PRODUCT_ID', [
+    ['name' => 'Large', 'attributes' => ['size' => 'L'], 'resource_id' => 'VARIANT-L'],
+]);
+$res = $mailerLite->ecommerceProductVariants->update('YOUR_SHOP_ID', 'PRODUCT_ID', 'VARIANT_ID', [
+    'name' => 'Extra large',
+    'attributes' => ['size' => 'XL'],
+]);
+$res = $mailerLite->ecommerceProductVariants->delete('YOUR_SHOP_ID', 'PRODUCT_ID', 'VARIANT_ID');
+```
+**Categories**
+```php
+$res = $mailerLite->ecommerceCategories->get('YOUR_SHOP_ID');
+$res = $mailerLite->ecommerceCategories->find('YOUR_SHOP_ID', 'CATEGORY_ID');
+$res = $mailerLite->ecommerceCategories->create('YOUR_SHOP_ID', ['name' => 'Hats']);
+$res = $mailerLite->ecommerceCategories->update('YOUR_SHOP_ID', 'CATEGORY_ID', ['name' => 'Caps']);
+$res = $mailerLite->ecommerceCategories->delete('YOUR_SHOP_ID', 'CATEGORY_ID');
+
+$res = $mailerLite->ecommerceCategories->products('YOUR_SHOP_ID', 'CATEGORY_ID');
+$res = $mailerLite->ecommerceCategories->assignProduct('YOUR_SHOP_ID', 'CATEGORY_ID', 'PRODUCT_ID');
+$res = $mailerLite->ecommerceCategories->unassignProduct('YOUR_SHOP_ID', 'CATEGORY_ID', 'PRODUCT_ID');
+```
 **Orders**
 ```php
+$res = $mailerLite->ecommerceOrders->get('YOUR_SHOP_ID', [
+    'filter' => ['attributed' => 'true', 'email_id' => 'EMAIL_ID'],
+]);
+$res = $mailerLite->ecommerceOrders->delete('YOUR_SHOP_ID', 'ORDER_ID');
+
 $res = $mailerLite->ecommerceOrders->create('YOUR_SHOP_ID', [
    'order_id' => 'ORD-1001',
 ]);
@@ -830,13 +876,49 @@ $res = $mailerLite->ecommerceOrders->update('YOUR_SHOP_ID', 'ORD-1001', [
 $res = $mailerLite->ecommerceCustomers->get('YOUR_SHOP_ID', ['limit' => 50]);
 $res = $mailerLite->ecommerceCustomers->create('YOUR_SHOP_ID', ['email' => 'user@example.com']);
 $res = $mailerLite->ecommerceCustomers->find('YOUR_SHOP_ID', 'CUSTOMER_ID');
+$res = $mailerLite->ecommerceCustomers->update('YOUR_SHOP_ID', 'CUSTOMER_ID', ['name' => 'Jane']);
+$res = $mailerLite->ecommerceCustomers->delete('YOUR_SHOP_ID', 'CUSTOMER_ID');
+```
+**Carts and cart items**
+```php
+$res = $mailerLite->ecommerceCarts->get('YOUR_SHOP_ID');
+$res = $mailerLite->ecommerceCarts->update('YOUR_SHOP_ID', 'CART_ID', ['checkout_url' => 'https://shop.example.com/cart']);
+
+$res = $mailerLite->ecommerceCartItems->get('YOUR_SHOP_ID', 'CART_ID');
+$res = $mailerLite->ecommerceCartItems->find('YOUR_SHOP_ID', 'CART_ID', 'ITEM_ID');
+$res = $mailerLite->ecommerceCartItems->update('YOUR_SHOP_ID', 'CART_ID', 'ITEM_ID', ['quantity' => 2]);
+$res = $mailerLite->ecommerceCartItems->delete('YOUR_SHOP_ID', 'CART_ID', 'ITEM_ID');
+```
+**Imports**
+```php
+$res = $mailerLite->ecommerceImport->products('YOUR_SHOP_ID', [['name' => 'Red T-shirt', 'price' => 19.99]]);
+$res = $mailerLite->ecommerceImport->categories('YOUR_SHOP_ID', [['name' => 'Hats']]);
+$res = $mailerLite->ecommerceImport->customers('YOUR_SHOP_ID', [['email' => 'user@example.com']]);
+```
+**Revenue reports**
+```php
+$res = $mailerLite->campaigns->getEcommerceStats('CAMPAIGN_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+$res = $mailerLite->campaigns->getEcommerceOrders('CAMPAIGN_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+
+$res = $mailerLite->subscribers->getEcommerceStats('SUBSCRIBER_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+$res = $mailerLite->subscribers->getEcommerceOrders('SUBSCRIBER_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+
+$res = $mailerLite->automations->getEcommerceStats('AUTOMATION_ID');
+$res = $mailerLite->automations->getEmailEcommerceStats('AUTOMATION_ID', 'EMAIL_ID');
+$res = $mailerLite->automations->getEcommerceOrders('AUTOMATION_ID', ['time_frame' => 'all_time']);
+
+$res = $mailerLite->ecommerceShops->stats('YOUR_SHOP_ID', ['start_date' => '2026-10-01', 'end_date' => '2026-10-31']);
+```
+**Tracking settings**
+```php
+$res = $mailerLite->ecommerceSettings->get();
 ```
 ## Optional PSR transport (no BC break)
 ```php
 use MailerLite\MailerLite;
 use MailerLite\Http\Adapters\Psr17FactoryAggregate;
-use Nyholm\Psr7\Factory\Psr17Factory; 
-use GuzzleHttp\Client as GuzzleHttpClient; 
+use Nyholm\Psr7\Factory\Psr17Factory;
+use GuzzleHttp\Client as GuzzleHttpClient;
 $ml = new MailerLite(['api_key' => 'YOUR_API_KEY']);
 
 $psr17 = new Psr17Factory();

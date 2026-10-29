@@ -57,7 +57,7 @@ class HttpLayer
     }
 
     /**
-     * @param array<string, mixed> $body
+     * @param array<mixed> $body
      *
      * @return array<string, mixed>
      */

@@ -35,4 +35,25 @@ final class Customer extends AbstractEndpoint
         $uri = $this->buildUri("ecommerce/shops/{$shopId}/customers/{$customerId}");
         return $this->httpLayer->get($uri);
     }
+
+    /**
+     * @param string|int $customerId
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    public function update(string $shopId, $customerId, array $data): array
+    {
+        $uri = $this->buildUri("ecommerce/shops/{$shopId}/customers/{$customerId}");
+        return $this->httpLayer->put($uri, $data);
+    }
+
+    /**
+     * @param string|int $customerId
+     * @return array<string,mixed>
+     */
+    public function delete(string $shopId, $customerId): array
+    {
+        $uri = $this->buildUri("ecommerce/shops/{$shopId}/customers/{$customerId}");
+        return $this->httpLayer->delete($uri);
+    }
 }
