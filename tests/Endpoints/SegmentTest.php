@@ -5,11 +5,14 @@ namespace MailerLite\Tests\Endpoints;
 use Http\Mock\Client;
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Segment;
+use MailerLite\Tests\Support\AssertsRequests;
 use MailerLite\Tests\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 class SegmentTest extends TestCase
 {
+    use AssertsRequests;
+
     protected Segment $segments;
     protected ResponseInterface $response;
     protected int $segmentId;
@@ -66,5 +69,20 @@ class SegmentTest extends TestCase
 
         self::assertEquals('GET', $request->getMethod());
         self::assertEquals("/api/segments/{$this->segmentId}/subscribers", $request->getUri()->getPath());
+    }
+
+    public function test_get_segment_subscribers_with_params()
+    {
+        $this->segments->getSubscribers($this->segmentId, [
+            'filter' => ['status' => 'active'],
+            'limit' => 25,
+            'cursor' => 'next_page_cursor',
+        ]);
+
+        $this->assertLastRequest('GET', "/api/segments/{$this->segmentId}/subscribers", [
+            'filter' => ['status' => 'active'],
+            'limit' => '25',
+            'cursor' => 'next_page_cursor',
+        ]);
     }
 }
