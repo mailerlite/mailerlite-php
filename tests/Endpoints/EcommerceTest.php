@@ -5,10 +5,13 @@ namespace MailerLite\Tests\Endpoints;
 use Http\Mock\Client;
 use MailerLite\MailerLite;
 use MailerLite\Common\HttpLayer;
+use MailerLite\Tests\Support\AssertsRequests;
 use MailerLite\Tests\TestCase;
 
 class EcommerceTest extends TestCase
 {
+    use AssertsRequests;
+
     /**
      * @dataProvider requests
      * @param array<string,mixed> $query
@@ -19,15 +22,7 @@ class EcommerceTest extends TestCase
         $this->client = new Client();
         $call(new MailerLite(self::OPTIONS, new HttpLayer(self::OPTIONS, $this->client)));
 
-        $request = $this->client->getLastRequest();
-        parse_str($request->getUri()->getQuery(), $actualQuery);
-
-        self::assertEquals($method, $request->getMethod());
-        self::assertEquals($path, $request->getUri()->getPath());
-        self::assertEquals($query, $actualQuery);
-        if ($body !== null) {
-            self::assertSame($body, json_decode((string) $request->getBody(), true));
-        }
+        $this->assertLastRequest($method, $path, $query, $body);
     }
 
     public function requests(): array
