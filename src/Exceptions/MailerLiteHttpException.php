@@ -8,8 +8,12 @@ use Psr\Http\Message\ResponseInterface;
 
 class MailerLiteHttpException extends MailerLiteException implements RequestExceptionInterface
 {
+    public const VERSION_CONFLICT = 'version_conflict';
+
     protected RequestInterface $request;
     protected ResponseInterface $response;
+    protected ?string $errorCode = null;
+    protected ?string $etag = null;
 
     public function __construct(
         RequestInterface $request,
@@ -26,6 +30,14 @@ class MailerLiteHttpException extends MailerLiteException implements RequestExce
         $this->request = $request;
         $this->response = $response;
 
+        $data = json_decode(self::readBody($response), true);
+        if (is_array($data)) {
+            $this->errorCode = is_string($data['code'] ?? null) ? $data['code'] : null;
+            $this->etag = is_string($data['etag'] ?? null) || is_int($data['etag'] ?? null)
+                ? (string) $data['etag']
+                : null;
+        }
+
         parent::__construct($message, $response->getStatusCode());
     }
 
@@ -37,5 +49,16 @@ class MailerLiteHttpException extends MailerLiteException implements RequestExce
     public function getRequest(): RequestInterface
     {
         return $this->request;
+    }
+
+    // getCode() is the HTTP status; this is the API's `code` field
+    public function getErrorCode(): ?string
+    {
+        return $this->errorCode;
+    }
+
+    public function getEtag(): ?string
+    {
+        return $this->etag;
     }
 }
