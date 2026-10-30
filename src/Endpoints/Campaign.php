@@ -102,4 +102,28 @@ class Campaign extends AbstractEndpoint
             $params
         );
     }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function getEcommerceStats(string $campaignId, array $params): array
+    {
+        return $this->httpLayer->get(
+            $this->buildUri("{$this->endpoint}/{$campaignId}/reports/ecommerce", $params)
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function getEcommerceOrders(string $campaignId, array $params): array
+    {
+        return $this->httpLayer->get(
+            $this->buildUri("{$this->endpoint}/{$campaignId}/reports/ecommerce/orders", $params)
+        );
+    }
 }

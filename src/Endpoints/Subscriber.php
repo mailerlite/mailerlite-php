@@ -74,4 +74,50 @@ class Subscriber extends AbstractEndpoint
             []
         );
     }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function getEcommerceStats(string $subscriberId, array $params): array
+    {
+        return $this->httpLayer->get(
+            $this->buildUri("{$this->endpoint}/{$subscriberId}/reports/ecommerce", $params)
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function getEcommerceOrders(string $subscriberId, array $params): array
+    {
+        return $this->httpLayer->get(
+            $this->buildUri("{$this->endpoint}/{$subscriberId}/reports/ecommerce/orders", $params)
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function getActivityLog(string $subscriberId, array $params = []): array
+    {
+        return $this->httpLayer->get(
+            $this->buildUri("{$this->endpoint}/{$subscriberId}/activity-log", $params)
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function findImport(string $importId): array
+    {
+        return $this->httpLayer->get(
+            $this->buildUri("{$this->endpoint}/import/{$importId}")
+        );
+    }
 }

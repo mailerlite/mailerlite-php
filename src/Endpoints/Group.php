@@ -96,4 +96,17 @@ class Group extends AbstractEndpoint
             $this->buildUri('subscribers') . "/{$subscriberId}/groups/{$groupId}"
         );
     }
+
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    public function importSubscribers(string $groupId, array $params): array
+    {
+        return $this->httpLayer->post(
+            $this->buildUri("{$this->endpoint}/{$groupId}/import-subscribers"),
+            $params
+        );
+    }
 }

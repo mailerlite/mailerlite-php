@@ -26,6 +26,10 @@ use MailerLite\Endpoints\Customer;
 use MailerLite\Endpoints\Cart;
 use MailerLite\Endpoints\CartItem;
 use MailerLite\Endpoints\Import;
+use MailerLite\Endpoints\Shop;
+use MailerLite\Endpoints\Category;
+use MailerLite\Endpoints\ProductVariant;
+use MailerLite\Endpoints\EcommerceSetting;
 
 class MailerLite
 {
@@ -63,6 +67,10 @@ class MailerLite
     public Cart $ecommerceCarts;
     public CartItem $ecommerceCartItems;
     public Import $ecommerceImport;
+    public Shop $ecommerceShops;
+    public Category $ecommerceCategories;
+    public ProductVariant $ecommerceProductVariants;
+    public EcommerceSetting $ecommerceSettings;
 
     /**
      * @param array<string,mixed> $options
@@ -131,5 +139,9 @@ class MailerLite
         $this->ecommerceCarts = new Cart($this->httpLayer, $this->options);
         $this->ecommerceCartItems = new CartItem($this->httpLayer, $this->options);
         $this->ecommerceImport = new Import($this->httpLayer, $this->options);
+        $this->ecommerceShops = new Shop($this->httpLayer, $this->options);
+        $this->ecommerceCategories = new Category($this->httpLayer, $this->options);
+        $this->ecommerceProductVariants = new ProductVariant($this->httpLayer, $this->options);
+        $this->ecommerceSettings = new EcommerceSetting($this->httpLayer, $this->options);
     }
 }

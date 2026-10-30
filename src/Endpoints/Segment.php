@@ -42,12 +42,14 @@ class Segment extends AbstractEndpoint
     }
 
     /**
+     * @param array<string, mixed> $params
+     *
      * @return array<string, mixed>
      */
-    public function getSubscribers(string $segmentId): array
+    public function getSubscribers(string $segmentId, array $params = []): array
     {
         return $this->httpLayer->get(
-            $this->buildUri($this->endpoint) . "/{$segmentId}/subscribers"
+            $this->buildUri($this->endpoint . "/{$segmentId}/subscribers", $params)
         );
     }
 }

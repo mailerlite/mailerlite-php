@@ -58,7 +58,7 @@ class HttpLayer
     }
 
     /**
-     * @param array<string, mixed>|null $body null sends the request with no body
+     * @param array<mixed>|null $body null sends the request with no body
      * @param array<string, string> $headers
      *
      * @return array<string, mixed>
@@ -102,7 +102,7 @@ class HttpLayer
     }
 
     /**
-     * @param array<string, mixed>|null $body null sends the request with no body
+     * @param array<mixed>|null $body null sends the request with no body
      * @param array<string, string> $headers
      *
      * @return array<string, mixed>

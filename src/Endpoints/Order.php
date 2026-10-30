@@ -7,6 +7,16 @@ use MailerLite\Endpoints\AbstractEndpoint;
 final class Order extends AbstractEndpoint
 {
     /**
+     * @param array<string,mixed> $params
+     * @return array<string,mixed>
+     */
+    public function get(string $shopId, array $params = []): array
+    {
+        $uri = $this->buildUri("ecommerce/shops/{$shopId}/orders", $params);
+        return $this->httpLayer->get($uri);
+    }
+
+    /**
      * @param array<string,mixed> $data
      * @return array<string,mixed>
      */
@@ -35,5 +45,15 @@ final class Order extends AbstractEndpoint
     {
         $uri = $this->buildUri("ecommerce/shops/{$shopId}/orders/{$orderId}");
         return $this->httpLayer->get($uri);
+    }
+
+    /**
+     * @param string|int $orderId
+     * @return array<string,mixed>
+     */
+    public function delete(string $shopId, $orderId): array
+    {
+        $uri = $this->buildUri("ecommerce/shops/{$shopId}/orders/{$orderId}");
+        return $this->httpLayer->delete($uri);
     }
 }

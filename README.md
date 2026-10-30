@@ -13,6 +13,8 @@
         * [Update](#update-subscriber)
         * [Delete](#delete-subscriber)
         * [Forget](#forget-subscriber)
+        * [Activity log](#subscriber-activity-log)
+        * [Import status](#subscriber-import-status)
     * [Campaign API](#email-api)
         * [Create](#create-campaign)
         * [Read](#read-campaign)
@@ -44,6 +46,7 @@
         * [Get subscribers](#group-list-subscribers)
         * [Assign subscriber](#group-assign-subscriber)
         * [Unassign subscriber](#group-unassign-subscriber)
+        * [Import subscribers](#group-import-subscribers)
     * [Segment API](#segment)
         * [Update](#segment-update)
         * [Read](#segment-read)
@@ -53,25 +56,32 @@
         * [Create](#field-create)
         * [Update](#field-update)
         * [Read](#field-read)
-        * [Delete](#field-delete)   
+        * [Delete](#field-delete)
     * [Form API](#form)
       * [Update](#form-update)
       * [Read](#form-read)
-      * [Delete](#form-delete)    
-      * [Signups](#form-subscribers)  
+      * [Delete](#form-delete)
+      * [Signups](#form-subscribers)
     * [Automation API](#automation)
       * [Read](#automation-read)
-      * [Activity](#automation-activity)  
+      * [Activity](#automation-activity)
+      * [Manage](#automation-manage)
+      * [Activity actions](#automation-activity-actions)
+      * [Triggers](#automation-triggers)
+      * [Steps](#automation-steps)
+      * [Emails](#automation-emails)
+      * [Templates](#automation-templates)
+      * [Reports](#automation-reports)
     * [Webhook API](#webhook)
       * [Create](#webhook-create)
       * [Update](#webhook-update)
       * [Read](#webhook-read)
-      * [Delete](#webhook-delete)    
+      * [Delete](#webhook-delete)
     * [Campaign language API](#campaign-language-read)
-    * [Timezone API](#timezone-read)    
-    * [Batch API](#batch-send)      
-* [Optional PSR transport (no BC break)](#optional-psr-transport-no-bc-break) 
-* [E-commerce (Products / Orders / Customers)](#e-commerce)    
+    * [Timezone API](#timezone-read)
+    * [Batch API](#batch-send)
+* [Optional PSR transport (no BC break)](#optional-psr-transport-no-bc-break)
+* [E-commerce](#e-commerce)
 * [Testing](#testing)
 * [License](#license)
 
@@ -203,6 +213,37 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $subscriberId = '123';
 
 $response = $mailerLite->subscribers->forget($subscriberId);
+```
+
+<a name="subscriber-activity-log"></a>
+### Activity log
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$subscriberId = '123';
+$data = [
+    'filter' => [
+        'log_name' => 'campaign_send',
+    ],
+    'limit' => 10,
+    'page' => 1,
+];
+
+$response = $mailerLite->subscribers->getActivityLog($subscriberId, $data);
+```
+
+<a name="subscriber-import-status"></a>
+### Import status
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$importId = '123';
+
+$response = $mailerLite->subscribers->findImport($importId);
 ```
 
 <a name="campaign"></a>
@@ -375,7 +416,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $campaignId = '123';
 $data = [
-    'type' => 'opened', 
+    'type' => 'opened',
 ];
 
 $response = $mailerLite->campaigns->getSubscriberActivity($campaignId, $data);
@@ -814,6 +855,25 @@ $subscriberId = '456';
 $response = $mailerLite->groups->unAssignSubscriber($groupId, $subscriberId);
 ```
 
+<a name="group-import-subscribers"></a>
+### Import subscribers to a group
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+$data = [
+    'subscribers' => [
+        ['email' => 'dummy@example.com'],
+    ],
+    'resubscribe' => false,
+    'trigger_automations' => true,
+];
+
+$response = $mailerLite->groups->importSubscribers($groupId, $data);
+```
+
 <a name="segment"></a>
 ## Segment API
 More information on request parameters:
@@ -867,8 +927,15 @@ use MailerLite\MailerLite;
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $segmentId = '123';
+$data = [
+    'filter' => [
+        'status' => 'active',
+    ],
+    'limit' => 25,
+    'cursor' => 'next_page_cursor',
+];
 
-$response = $mailerLite->segments->getSubscribers($segmentId);
+$response = $mailerLite->segments->getSubscribers($segmentId, $data);
 ```
 
 <a name="field"></a>
@@ -1048,6 +1115,133 @@ $data = [
 $response = $mailerLite->automations->activity($automationId, $data);
 ```
 
+<a name="automation-manage"></a>
+### Manage
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+
+$response = $mailerLite->automations->create(['name' => 'Welcome']);
+$response = $mailerLite->automations->update($automationId, ['name' => 'Welcome series']);
+$response = $mailerLite->automations->delete($automationId);
+$response = $mailerLite->automations->copy($automationId);
+$response = $mailerLite->automations->enable($automationId);
+$response = $mailerLite->automations->disable($automationId);
+$response = $mailerLite->automations->test($automationId, ['email' => 'dummy@example.com']);
+$response = $mailerLite->automations->addSubscribers($automationId, ['emails' => ['dummy@example.com']]);
+$response = $mailerLite->automations->readd($automationId, [
+    'readd_subscribers_to' => 'last_completed_step',
+    'filter' => ['status' => 'completed', 'search' => 'example.com'],
+]);
+```
+
+<a name="automation-activity-actions"></a>
+### Activity actions
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$filter = ['filter' => ['status' => 'active']];
+
+$response = $mailerLite->automations->addActivityToGroup($automationId, ['destination_groups' => ['456']] + $filter);
+$response = $mailerLite->automations->cancelActivity($automationId, $filter);
+$response = $mailerLite->automations->skipActivityDelay($automationId, $filter);
+```
+
+<a name="automation-triggers"></a>
+### Triggers
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$triggerId = '456';
+
+$response = $mailerLite->automations->getTriggers($automationId);
+$response = $mailerLite->automations->findTrigger($automationId, $triggerId);
+$response = $mailerLite->automations->createTrigger($automationId, [
+    'type' => 'subscriber_joins_group',
+    'data' => ['group_ids' => ['789']],
+]);
+$response = $mailerLite->automations->updateTrigger($automationId, $triggerId, ['data' => ['group_ids' => ['789']]]);
+$response = $mailerLite->automations->deleteTrigger($automationId, $triggerId);
+```
+
+<a name="automation-steps"></a>
+### Steps
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$stepId = '456';
+
+$response = $mailerLite->automations->getSteps($automationId);
+$response = $mailerLite->automations->findStep($automationId, $stepId);
+$response = $mailerLite->automations->createStep($automationId, ['type' => 'delay', 'parent_id' => '789']);
+$response = $mailerLite->automations->updateStep($automationId, $stepId, ['data' => ['unit' => 'days', 'value' => 3]]);
+$response = $mailerLite->automations->deleteStep($automationId, $stepId, ['branch_to_delete' => 'yes']);
+$response = $mailerLite->automations->copyStep($automationId, $stepId, ['parent_id' => '789']);
+$response = $mailerLite->automations->reorderSteps($automationId, ['dragged_step_id' => $stepId, 'new_parent_step_id' => '789']);
+$response = $mailerLite->automations->selectAbTestWinner($automationId, $stepId, ['ab_test_winner' => 'a_path']);
+```
+
+<a name="automation-emails"></a>
+### Emails
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$emailId = '456';
+
+$response = $mailerLite->automations->getEmailContent($automationId, $emailId);
+$response = $mailerLite->automations->updateEmailContent($automationId, $emailId, ['html' => '<p>Hello</p>']);
+$response = $mailerLite->automations->getEmailReportStats($automationId, $emailId, ['start_date' => '2026-10-01', 'end_date' => '2026-10-31']);
+$response = $mailerLite->automations->getEmailUnsubscribeReasons($automationId, $emailId);
+```
+
+<a name="automation-templates"></a>
+### Templates
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->automations->getTemplates(['filter' => ['category' => 3]]);
+$response = $mailerLite->automations->selectTemplate('123');
+```
+
+<a name="automation-reports"></a>
+### Reports
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$stepId = '456';
+$triggerId = '789';
+
+$response = $mailerLite->automations->getStepRunCounts($automationId);
+$response = $mailerLite->automations->getStepRunCount($automationId, $stepId);
+$response = $mailerLite->automations->getTriggerRunCounts($automationId);
+$response = $mailerLite->automations->getTriggerRunCount($automationId, $triggerId);
+$response = $mailerLite->automations->getAbStepsStats($automationId);
+$response = $mailerLite->automations->getAbStepStats($automationId, $stepId);
+$response = $mailerLite->automations->getStepSubscribers($automationId, $stepId, ['status' => 'completed']);
+$response = $mailerLite->automations->getTriggerSubscribers($automationId, $triggerId, ['status' => 'completed']);
+$response = $mailerLite->automations->getEmailStats($automationId, ['start_date' => '2026-10-01', 'end_date' => '2026-10-31']);
+```
+
 <a name="webhook"></a>
 ## Webhook API
 More information on request parameters:
@@ -1154,16 +1348,33 @@ $response = $mailerLite->timezones->get();
 More information about request parameters on https://developers.mailerlite.com/docs/batching.html
 
 <a name="e-commerce"></a>
-## E-commerce (Products / Orders / Customers)
+## E-commerce
 
 E-commerce endpoints follow:
 ```php
 /api/ecommerce/shops/{shopId}/...
 ```
-`shopId` is provided per call (there is no separate `/shops` API).
+`shopId` is provided per call.
+
+**Shops**
+```php
+$res = $mailerLite->ecommerceShops->get();
+$res = $mailerLite->ecommerceShops->find('YOUR_SHOP_ID');
+$res = $mailerLite->ecommerceShops->create(['name' => 'My shop', 'url' => 'https://shop.example.com', 'currency' => 'EUR']);
+$res = $mailerLite->ecommerceShops->update('YOUR_SHOP_ID', ['name' => 'New name']);
+$res = $mailerLite->ecommerceShops->delete('YOUR_SHOP_ID');
+```
 
 **Products**
 ```php
+$res = $mailerLite->ecommerceProducts->get('YOUR_SHOP_ID', [
+    'filter' => ['enabled' => 'true', 'category' => 'CATEGORY_ID'],
+    'sort'   => '-created_at',
+]);
+$res = $mailerLite->ecommerceProducts->delete('YOUR_SHOP_ID', 'PRODUCT_ID');
+$res = $mailerLite->ecommerceProducts->changeStatus('YOUR_SHOP_ID', 'PRODUCT_ID', false);
+$res = $mailerLite->ecommerceProducts->assignCategories('YOUR_SHOP_ID', 'PRODUCT_ID', ['CATEGORY_ID'], true);
+
 $res = $mailerLite->ecommerceProducts->create('YOUR_SHOP_ID', [
     'title'    => 'Red T-shirt',
     'price'    => 19.99,
@@ -1176,8 +1387,37 @@ $res = $mailerLite->ecommerceProducts->update('YOUR_SHOP_ID', 'PRODUCT_ID', [
     'title' => 'New title',
 ]);
 ```
+**Product variants**
+```php
+$res = $mailerLite->ecommerceProductVariants->get('YOUR_SHOP_ID', 'PRODUCT_ID');
+$res = $mailerLite->ecommerceProductVariants->sync('YOUR_SHOP_ID', 'PRODUCT_ID', [
+    ['name' => 'Large', 'attributes' => ['size' => 'L'], 'resource_id' => 'VARIANT-L'],
+]);
+$res = $mailerLite->ecommerceProductVariants->update('YOUR_SHOP_ID', 'PRODUCT_ID', 'VARIANT_ID', [
+    'name' => 'Extra large',
+    'attributes' => ['size' => 'XL'],
+]);
+$res = $mailerLite->ecommerceProductVariants->delete('YOUR_SHOP_ID', 'PRODUCT_ID', 'VARIANT_ID');
+```
+**Categories**
+```php
+$res = $mailerLite->ecommerceCategories->get('YOUR_SHOP_ID');
+$res = $mailerLite->ecommerceCategories->find('YOUR_SHOP_ID', 'CATEGORY_ID');
+$res = $mailerLite->ecommerceCategories->create('YOUR_SHOP_ID', ['name' => 'Hats']);
+$res = $mailerLite->ecommerceCategories->update('YOUR_SHOP_ID', 'CATEGORY_ID', ['name' => 'Caps']);
+$res = $mailerLite->ecommerceCategories->delete('YOUR_SHOP_ID', 'CATEGORY_ID');
+
+$res = $mailerLite->ecommerceCategories->products('YOUR_SHOP_ID', 'CATEGORY_ID');
+$res = $mailerLite->ecommerceCategories->assignProduct('YOUR_SHOP_ID', 'CATEGORY_ID', 'PRODUCT_ID');
+$res = $mailerLite->ecommerceCategories->unassignProduct('YOUR_SHOP_ID', 'CATEGORY_ID', 'PRODUCT_ID');
+```
 **Orders**
 ```php
+$res = $mailerLite->ecommerceOrders->get('YOUR_SHOP_ID', [
+    'filter' => ['attributed' => 'true', 'email_id' => 'EMAIL_ID'],
+]);
+$res = $mailerLite->ecommerceOrders->delete('YOUR_SHOP_ID', 'ORDER_ID');
+
 $res = $mailerLite->ecommerceOrders->create('YOUR_SHOP_ID', [
    'order_id' => 'ORD-1001',
 ]);
@@ -1193,13 +1433,49 @@ $res = $mailerLite->ecommerceOrders->update('YOUR_SHOP_ID', 'ORD-1001', [
 $res = $mailerLite->ecommerceCustomers->get('YOUR_SHOP_ID', ['limit' => 50]);
 $res = $mailerLite->ecommerceCustomers->create('YOUR_SHOP_ID', ['email' => 'user@example.com']);
 $res = $mailerLite->ecommerceCustomers->find('YOUR_SHOP_ID', 'CUSTOMER_ID');
+$res = $mailerLite->ecommerceCustomers->update('YOUR_SHOP_ID', 'CUSTOMER_ID', ['name' => 'Jane']);
+$res = $mailerLite->ecommerceCustomers->delete('YOUR_SHOP_ID', 'CUSTOMER_ID');
+```
+**Carts and cart items**
+```php
+$res = $mailerLite->ecommerceCarts->get('YOUR_SHOP_ID');
+$res = $mailerLite->ecommerceCarts->update('YOUR_SHOP_ID', 'CART_ID', ['checkout_url' => 'https://shop.example.com/cart']);
+
+$res = $mailerLite->ecommerceCartItems->get('YOUR_SHOP_ID', 'CART_ID');
+$res = $mailerLite->ecommerceCartItems->find('YOUR_SHOP_ID', 'CART_ID', 'ITEM_ID');
+$res = $mailerLite->ecommerceCartItems->update('YOUR_SHOP_ID', 'CART_ID', 'ITEM_ID', ['quantity' => 2]);
+$res = $mailerLite->ecommerceCartItems->delete('YOUR_SHOP_ID', 'CART_ID', 'ITEM_ID');
+```
+**Imports**
+```php
+$res = $mailerLite->ecommerceImport->products('YOUR_SHOP_ID', [['name' => 'Red T-shirt', 'price' => 19.99]]);
+$res = $mailerLite->ecommerceImport->categories('YOUR_SHOP_ID', [['name' => 'Hats']]);
+$res = $mailerLite->ecommerceImport->customers('YOUR_SHOP_ID', [['email' => 'user@example.com']]);
+```
+**Revenue reports**
+```php
+$res = $mailerLite->campaigns->getEcommerceStats('CAMPAIGN_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+$res = $mailerLite->campaigns->getEcommerceOrders('CAMPAIGN_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+
+$res = $mailerLite->subscribers->getEcommerceStats('SUBSCRIBER_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+$res = $mailerLite->subscribers->getEcommerceOrders('SUBSCRIBER_ID', ['shop_id' => 'YOUR_SHOP_ID']);
+
+$res = $mailerLite->automations->getEcommerceStats('AUTOMATION_ID');
+$res = $mailerLite->automations->getEmailEcommerceStats('AUTOMATION_ID', 'EMAIL_ID');
+$res = $mailerLite->automations->getEcommerceOrders('AUTOMATION_ID', ['time_frame' => 'all_time']);
+
+$res = $mailerLite->ecommerceShops->stats('YOUR_SHOP_ID', ['start_date' => '2026-10-01', 'end_date' => '2026-10-31']);
+```
+**Tracking settings**
+```php
+$res = $mailerLite->ecommerceSettings->get();
 ```
 ## Optional PSR transport (no BC break)
 ```php
 use MailerLite\MailerLite;
 use MailerLite\Http\Adapters\Psr17FactoryAggregate;
-use Nyholm\Psr7\Factory\Psr17Factory; 
-use GuzzleHttp\Client as GuzzleHttpClient; 
+use Nyholm\Psr7\Factory\Psr17Factory;
+use GuzzleHttp\Client as GuzzleHttpClient;
 $ml = new MailerLite(['api_key' => 'YOUR_API_KEY']);
 
 $psr17 = new Psr17Factory();

@@ -5,11 +5,14 @@ namespace MailerLite\Tests\Endpoints;
 use Http\Mock\Client;
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Group;
+use MailerLite\Tests\Support\AssertsRequests;
 use MailerLite\Tests\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 class GroupTest extends TestCase
 {
+    use AssertsRequests;
+
     protected Group $groups;
     protected ResponseInterface $response;
     protected int $groupId;
@@ -121,5 +124,18 @@ class GroupTest extends TestCase
         $request = $this->client->getLastRequest();
         self::assertEquals('DELETE', $request->getMethod());
         self::assertEquals("/api/subscribers/{$subscriberId}/groups/{$this->groupId}", $request->getUri()->getPath());
+    }
+
+    public function test_import_subscribers()
+    {
+        $body = [
+            'subscribers' => [['email' => 'dummy@example.com']],
+            'resubscribe' => true,
+            'trigger_automations' => false,
+        ];
+
+        $this->groups->importSubscribers($this->groupId, $body);
+
+        $this->assertLastRequest('POST', "/api/groups/{$this->groupId}/import-subscribers", [], $body);
     }
 }
