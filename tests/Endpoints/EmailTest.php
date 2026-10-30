@@ -8,7 +8,6 @@ use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Email;
 use MailerLite\Exceptions\MailerLiteEmptyIdException;
 use MailerLite\Exceptions\MailerLiteHttpException;
-use MailerLite\Exceptions\MailerLiteInvalidArgumentException;
 use MailerLite\Exceptions\MailerLiteInvalidIdException;
 use MailerLite\Exceptions\MailerLiteValidationException;
 use MailerLite\Tests\TestCase;
@@ -188,23 +187,6 @@ class EmailTest extends TestCase
         self::assertEquals(['etag' => '42'], json_decode((string) $request->getBody(), true));
     }
 
-    public function test_delete_block_and_restore_version_reject_an_empty_etag()
-    {
-        foreach ([
-            fn () => $this->emails->deleteBlock($this->emailId, $this->blockId, ''),
-            fn () => $this->emails->restoreVersion($this->emailId, '789', ''),
-        ] as $call) {
-            try {
-                $call();
-                self::fail('Expected MailerLiteInvalidArgumentException');
-            } catch (MailerLiteInvalidArgumentException $e) {
-                self::assertStringContainsString('etag', $e->getMessage());
-            }
-        }
-
-        self::assertFalse($this->client->getLastRequest());
-    }
-
     public function test_an_empty_id_is_rejected_before_the_request()
     {
         $this->expectException(MailerLiteEmptyIdException::class);
@@ -271,46 +253,6 @@ class EmailTest extends TestCase
         self::assertFalse($this->client->getLastRequest());
     }
 
-    /**
-     * @dataProvider placementWithoutValidBlockId
-     */
-    public function test_before_and_after_require_a_valid_block_id(array $placement, string $exception)
-    {
-        $this->expectException($exception);
-
-        $this->emails->moveBlock($this->emailId, $this->blockId, ['placement' => $placement]);
-    }
-
-    public function placementWithoutValidBlockId(): array
-    {
-        return [
-            'before, missing' => [['position' => 'before'], MailerLiteEmptyIdException::class],
-            'after, empty' => [['position' => 'after', 'block_id' => ''], MailerLiteEmptyIdException::class],
-            'after, invalid' => [['position' => 'after', 'block_id' => '57/x'], MailerLiteInvalidIdException::class],
-        ];
-    }
-
-    public function test_placement_block_id_may_be_an_integer()
-    {
-        $params = ['placement' => ['position' => Email::POSITION_AFTER, 'block_id' => 57]];
-
-        $this->emails->createBlock($this->emailId, $params);
-
-        self::assertEquals($params, json_decode((string) $this->client->getLastRequest()->getBody(), true));
-    }
-
-    public function test_start_and_end_do_not_send_block_id()
-    {
-        $this->emails->createBlock($this->emailId, [
-            'type' => 'divider',
-            'placement' => ['position' => Email::POSITION_END, 'block_id' => ''],
-        ]);
-
-        $body = json_decode((string) $this->client->getLastRequest()->getBody(), true);
-
-        self::assertSame(['position' => 'end'], $body['placement']);
-    }
-
     public function test_idempotency_key_is_sent_as_a_header()
     {
         $this->emails->deleteBlock($this->emailId, $this->blockId, '42', 'retry-key-1');
@@ -345,36 +287,36 @@ class EmailTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider invalidIdempotencyKeys
-     */
-    public function test_an_invalid_idempotency_key_is_rejected_before_the_request(string $key)
+    public function test_an_empty_etag_is_sent_for_the_api_to_answer()
     {
-        $this->expectException(MailerLiteInvalidArgumentException::class);
+        $this->emails->deleteBlock($this->emailId, $this->blockId, '');
+        self::assertEquals(['etag' => ''], json_decode((string) $this->client->getLastRequest()->getBody(), true));
 
-        try {
-            $this->emails->createVersion($this->emailId, $key);
-        } finally {
-            self::assertFalse($this->client->getLastRequest());
+        $this->client->addResponse($this->response);
+        $this->emails->restoreVersion($this->emailId, '789', '');
+        self::assertEquals(['etag' => ''], json_decode((string) $this->client->getLastRequest()->getBody(), true));
+    }
+
+    public function test_placement_is_sent_as_given()
+    {
+        $placements = [
+            ['position' => Email::POSITION_BEFORE],
+            ['position' => Email::POSITION_END, 'block_id' => ''],
+            ['position' => Email::POSITION_AFTER, 'block_id' => 57],
+        ];
+
+        foreach ($placements as $placement) {
+            $this->client->addResponse($this->response);
+            $this->emails->moveBlock($this->emailId, $this->blockId, ['placement' => $placement]);
+
+            $body = json_decode((string) $this->client->getLastRequest()->getBody(), true);
+            self::assertSame($placement, $body['placement']);
         }
     }
 
-    public function invalidIdempotencyKeys(): array
+    public function test_idempotency_key_is_sent_as_given()
     {
-        return [
-            'empty' => [''],
-            'too long' => [str_repeat('a', 256)],
-            'leading space' => [' key'],
-            'trailing space' => ['key '],
-            'new line' => ["key\n"],
-            'tab' => ["k\tey"],
-            'non-ASCII' => ['kéy'],
-        ];
-    }
-
-    public function test_valid_idempotency_key_edges_are_accepted()
-    {
-        foreach (['a', str_repeat('a', 255), 'a b', '~!'] as $key) {
+        foreach (['a', str_repeat('a', 300), 'a b'] as $key) {
             $this->client->addResponse($this->response);
             $this->emails->createVersion($this->emailId, $key);
             self::assertSame($key, $this->client->getLastRequest()->getHeaderLine('Idempotency-Key'));

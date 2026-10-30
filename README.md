@@ -413,8 +413,7 @@ try {
 ```
 
 To retry a write safely after a network error, pass an idempotency key as the last argument. Use
-the same key for the retry. The key must be 1 to 255 printable ASCII characters, with no space at
-the start or the end. If the API returns the stored response of the first attempt,
+the same key for the retry. If the API returns the stored response of the first attempt,
 `$response['is_idempotent_replay']` is `true`.
 
 ```php
@@ -536,7 +535,7 @@ $response = $mailerLite->emails->createBlock($emailId, $data);
 A PHP empty array is sent as `[]`. To send an empty `editor_content` object, `{}`, use `new \stdClass()`.
 
 `placement.position` is `start`, `end`, `before` or `after` (the `Email::POSITION_*` constants).
-`before` and `after` need a `block_id`. For `start` and `end`, `block_id` is not sent.
+`before` and `after` need a `block_id`.
 
 <a name="update-email-block"></a>
 

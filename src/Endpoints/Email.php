@@ -3,7 +3,6 @@
 namespace MailerLite\Endpoints;
 
 use MailerLite\Exceptions\MailerLiteEmptyIdException;
-use MailerLite\Exceptions\MailerLiteInvalidArgumentException;
 use MailerLite\Exceptions\MailerLiteInvalidIdException;
 
 class Email extends AbstractEndpoint
@@ -95,7 +94,7 @@ class Email extends AbstractEndpoint
 
         return $this->httpLayer->post(
             $this->buildUri("{$this->endpoint}/{$emailId}/blocks"),
-            $this->preparePlacement($params),
+            $params,
             $this->idempotencyHeaders($idempotencyKey)
         );
     }
@@ -112,7 +111,7 @@ class Email extends AbstractEndpoint
 
         return $this->httpLayer->post(
             $this->buildUri("{$this->endpoint}/{$emailId}/blocks/{$blockId}/move"),
-            $this->preparePlacement($params),
+            $params,
             $this->idempotencyHeaders($idempotencyKey)
         );
     }
@@ -186,7 +185,6 @@ class Email extends AbstractEndpoint
     ): array {
         $this->assertId($emailId, 'emailId');
         $this->assertId($versionId, 'versionId');
-        $this->assertEtag($etag);
 
         return $this->httpLayer->post(
             $this->buildUri("{$this->endpoint}/{$emailId}/versions/{$versionId}/restore"),
@@ -235,7 +233,6 @@ class Email extends AbstractEndpoint
     {
         $this->assertId($emailId, 'emailId');
         $this->assertId($blockId, 'blockId');
-        $this->assertEtag($etag);
 
         return $this->httpLayer->delete(
             $this->buildUri("{$this->endpoint}/{$emailId}/blocks/{$blockId}"),
@@ -245,51 +242,18 @@ class Email extends AbstractEndpoint
     }
 
     /**
-     * @param mixed $id
+     * "123/html" would reach a different endpoint, so path IDs are checked before the request.
      */
-    private function assertId($id, string $name): void
+    private function assertId(string $id, string $name): void
     {
-        if (is_int($id)) {
-            $id = (string) $id;
-        }
-
-        if ($id === '' || $id === null) {
+        if ($id === '') {
             throw new MailerLiteEmptyIdException("{$name} must not be empty.");
         }
 
         // The D modifier stops $ from matching before a trailing new line
-        if (!is_string($id) || !preg_match('/^[0-9]+$/D', $id)) {
+        if (!preg_match('/^[0-9]+$/D', $id)) {
             throw new MailerLiteInvalidIdException("{$name} must contain only the digits 0-9.");
         }
-    }
-
-    private function assertEtag(string $etag): void
-    {
-        if ($etag === '') {
-            throw new MailerLiteInvalidArgumentException('etag must not be empty. Send the etag from your last read or write of this email.');
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $params
-     *
-     * @return array<string, mixed>
-     */
-    private function preparePlacement(array $params): array
-    {
-        if (!isset($params['placement']) || !is_array($params['placement'])) {
-            return $params;
-        }
-
-        $position = $params['placement']['position'] ?? null;
-
-        if ($position === self::POSITION_BEFORE || $position === self::POSITION_AFTER) {
-            $this->assertId($params['placement']['block_id'] ?? null, 'placement.block_id');
-        } elseif ($position === self::POSITION_START || $position === self::POSITION_END) {
-            unset($params['placement']['block_id']);
-        }
-
-        return $params;
     }
 
     /**
@@ -299,13 +263,6 @@ class Email extends AbstractEndpoint
     {
         if ($idempotencyKey === null) {
             return [];
-        }
-
-        // No space at either end: HTTP strips it, so the API would see a different key
-        if (!preg_match('/^[\x21-\x7E](?:[\x20-\x7E]{0,253}[\x21-\x7E])?$/D', $idempotencyKey)) {
-            throw new MailerLiteInvalidArgumentException(
-                'idempotencyKey must be 1-255 printable ASCII characters (0x20-0x7E), with no space at the start or the end.'
-            );
         }
 
         return ['Idempotency-Key' => $idempotencyKey];
