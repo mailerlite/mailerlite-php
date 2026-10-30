@@ -13,6 +13,8 @@
         * [Update](#update-subscriber)
         * [Delete](#delete-subscriber)
         * [Forget](#forget-subscriber)
+        * [Activity log](#subscriber-activity-log)
+        * [Import status](#subscriber-import-status)
     * [Campaign API](#email-api)
         * [Create](#create-campaign)
         * [Read](#read-campaign)
@@ -29,6 +31,7 @@
         * [Get subscribers](#group-list-subscribers)
         * [Assign subscriber](#group-assign-subscriber)
         * [Unassign subscriber](#group-unassign-subscriber)
+        * [Import subscribers](#group-import-subscribers)
     * [Segment API](#segment)
         * [Update](#segment-update)
         * [Read](#segment-read)
@@ -47,6 +50,13 @@
     * [Automation API](#automation)
       * [Read](#automation-read)
       * [Activity](#automation-activity)
+      * [Manage](#automation-manage)
+      * [Activity actions](#automation-activity-actions)
+      * [Triggers](#automation-triggers)
+      * [Steps](#automation-steps)
+      * [Emails](#automation-emails)
+      * [Templates](#automation-templates)
+      * [Reports](#automation-reports)
     * [Webhook API](#webhook)
       * [Create](#webhook-create)
       * [Update](#webhook-update)
@@ -188,6 +198,37 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $subscriberId = '123';
 
 $response = $mailerLite->subscribers->forget($subscriberId);
+```
+
+<a name="subscriber-activity-log"></a>
+### Activity log
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$subscriberId = '123';
+$data = [
+    'filter' => [
+        'log_name' => 'campaign_send',
+    ],
+    'limit' => 10,
+    'page' => 1,
+];
+
+$response = $mailerLite->subscribers->getActivityLog($subscriberId, $data);
+```
+
+<a name="subscriber-import-status"></a>
+### Import status
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$importId = '123';
+
+$response = $mailerLite->subscribers->findImport($importId);
 ```
 
 <a name="campaign"></a>
@@ -451,6 +492,25 @@ $subscriberId = '456';
 $response = $mailerLite->groups->unAssignSubscriber($groupId, $subscriberId);
 ```
 
+<a name="group-import-subscribers"></a>
+### Import subscribers to a group
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$groupId = '123';
+$data = [
+    'subscribers' => [
+        ['email' => 'dummy@example.com'],
+    ],
+    'resubscribe' => false,
+    'trigger_automations' => true,
+];
+
+$response = $mailerLite->groups->importSubscribers($groupId, $data);
+```
+
 <a name="segment"></a>
 ## Segment API
 More information on request parameters:
@@ -504,8 +564,15 @@ use MailerLite\MailerLite;
 $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $segmentId = '123';
+$data = [
+    'filter' => [
+        'status' => 'active',
+    ],
+    'limit' => 25,
+    'cursor' => 'next_page_cursor',
+];
 
-$response = $mailerLite->segments->getSubscribers($segmentId);
+$response = $mailerLite->segments->getSubscribers($segmentId, $data);
 ```
 
 <a name="field"></a>
@@ -683,6 +750,133 @@ $data = [
 ];
 
 $response = $mailerLite->automations->activity($automationId, $data);
+```
+
+<a name="automation-manage"></a>
+### Manage
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+
+$response = $mailerLite->automations->create(['name' => 'Welcome']);
+$response = $mailerLite->automations->update($automationId, ['name' => 'Welcome series']);
+$response = $mailerLite->automations->delete($automationId);
+$response = $mailerLite->automations->copy($automationId);
+$response = $mailerLite->automations->enable($automationId);
+$response = $mailerLite->automations->disable($automationId);
+$response = $mailerLite->automations->test($automationId, ['email' => 'dummy@example.com']);
+$response = $mailerLite->automations->addSubscribers($automationId, ['emails' => ['dummy@example.com']]);
+$response = $mailerLite->automations->readd($automationId, [
+    'readd_subscribers_to' => 'last_completed_step',
+    'filter' => ['status' => 'completed', 'search' => 'example.com'],
+]);
+```
+
+<a name="automation-activity-actions"></a>
+### Activity actions
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$filter = ['filter' => ['status' => 'active']];
+
+$response = $mailerLite->automations->addActivityToGroup($automationId, ['destination_groups' => ['456']] + $filter);
+$response = $mailerLite->automations->cancelActivity($automationId, $filter);
+$response = $mailerLite->automations->skipActivityDelay($automationId, $filter);
+```
+
+<a name="automation-triggers"></a>
+### Triggers
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$triggerId = '456';
+
+$response = $mailerLite->automations->getTriggers($automationId);
+$response = $mailerLite->automations->findTrigger($automationId, $triggerId);
+$response = $mailerLite->automations->createTrigger($automationId, [
+    'type' => 'subscriber_joins_group',
+    'data' => ['group_ids' => ['789']],
+]);
+$response = $mailerLite->automations->updateTrigger($automationId, $triggerId, ['data' => ['group_ids' => ['789']]]);
+$response = $mailerLite->automations->deleteTrigger($automationId, $triggerId);
+```
+
+<a name="automation-steps"></a>
+### Steps
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$stepId = '456';
+
+$response = $mailerLite->automations->getSteps($automationId);
+$response = $mailerLite->automations->findStep($automationId, $stepId);
+$response = $mailerLite->automations->createStep($automationId, ['type' => 'delay', 'parent_id' => '789']);
+$response = $mailerLite->automations->updateStep($automationId, $stepId, ['data' => ['unit' => 'days', 'value' => 3]]);
+$response = $mailerLite->automations->deleteStep($automationId, $stepId, ['branch_to_delete' => 'yes']);
+$response = $mailerLite->automations->copyStep($automationId, $stepId, ['parent_id' => '789']);
+$response = $mailerLite->automations->reorderSteps($automationId, ['dragged_step_id' => $stepId, 'new_parent_step_id' => '789']);
+$response = $mailerLite->automations->selectAbTestWinner($automationId, $stepId, ['ab_test_winner' => 'a_path']);
+```
+
+<a name="automation-emails"></a>
+### Emails
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$emailId = '456';
+
+$response = $mailerLite->automations->getEmailContent($automationId, $emailId);
+$response = $mailerLite->automations->updateEmailContent($automationId, $emailId, ['html' => '<p>Hello</p>']);
+$response = $mailerLite->automations->getEmailReportStats($automationId, $emailId, ['start_date' => '2026-10-01', 'end_date' => '2026-10-31']);
+$response = $mailerLite->automations->getEmailUnsubscribeReasons($automationId, $emailId);
+```
+
+<a name="automation-templates"></a>
+### Templates
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$response = $mailerLite->automations->getTemplates(['filter' => ['category' => 3]]);
+$response = $mailerLite->automations->selectTemplate('123');
+```
+
+<a name="automation-reports"></a>
+### Reports
+```php
+use MailerLite\MailerLite;
+
+$mailerLite = new MailerLite(['api_key' => 'key']);
+
+$automationId = '123';
+$stepId = '456';
+$triggerId = '789';
+
+$response = $mailerLite->automations->getStepRunCounts($automationId);
+$response = $mailerLite->automations->getStepRunCount($automationId, $stepId);
+$response = $mailerLite->automations->getTriggerRunCounts($automationId);
+$response = $mailerLite->automations->getTriggerRunCount($automationId, $triggerId);
+$response = $mailerLite->automations->getAbStepsStats($automationId);
+$response = $mailerLite->automations->getAbStepStats($automationId, $stepId);
+$response = $mailerLite->automations->getStepSubscribers($automationId, $stepId, ['status' => 'completed']);
+$response = $mailerLite->automations->getTriggerSubscribers($automationId, $triggerId, ['status' => 'completed']);
+$response = $mailerLite->automations->getEmailStats($automationId, ['start_date' => '2026-10-01', 'end_date' => '2026-10-31']);
 ```
 
 <a name="webhook"></a>
