@@ -5,11 +5,14 @@ namespace MailerLite\Tests\Endpoints;
 use Http\Mock\Client;
 use MailerLite\Common\HttpLayer;
 use MailerLite\Endpoints\Subscriber;
+use MailerLite\Tests\Support\AssertsRequests;
 use MailerLite\Tests\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 class SubscriberTest extends TestCase
 {
+    use AssertsRequests;
+
     protected Subscriber $subscribers;
     protected ResponseInterface $response;
     protected int $subscriberId;
@@ -108,5 +111,27 @@ class SubscriberTest extends TestCase
         self::assertEquals('GET', $request->getMethod());
         self::assertEquals("/api/subscribers/{$this->subscriberId}/reports/ecommerce/orders", $request->getUri()->getPath());
         self::assertEquals('shop_id=1', $request->getUri()->getQuery());
+    }
+
+    public function test_get_activity_log()
+    {
+        $this->subscribers->getActivityLog($this->subscriberId, [
+            'filter' => ['log_name' => 'campaign_send'],
+            'limit' => 10,
+            'page' => 2,
+        ]);
+
+        $this->assertLastRequest('GET', "/api/subscribers/{$this->subscriberId}/activity-log", [
+            'filter' => ['log_name' => 'campaign_send'],
+            'limit' => '10',
+            'page' => '2',
+        ]);
+    }
+
+    public function test_find_import()
+    {
+        $this->subscribers->findImport('456');
+
+        $this->assertLastRequest('GET', '/api/subscribers/import/456');
     }
 }
