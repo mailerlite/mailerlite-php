@@ -48,63 +48,76 @@ class HttpLayer
 
     /**
      * @param array<string, mixed> $body
+     * @param array<string, string> $headers
      *
      * @return array<string, mixed>
      */
-    public function get(string $uri, array $body = []): array
+    public function get(string $uri, array $body = [], array $headers = []): array
     {
-        return $this->callMethod('GET', $uri, $body);
+        return $this->callMethod('GET', $uri, $body, $headers);
+    }
+
+    /**
+     * @param array<string, mixed>|null $body null sends the request with no body
+     * @param array<string, string> $headers
+     *
+     * @return array<string, mixed>
+     */
+    public function post(string $uri, ?array $body = [], array $headers = []): array
+    {
+        return $this->callMethod('POST', $uri, $body, $headers);
     }
 
     /**
      * @param array<string, mixed> $body
+     * @param array<string, string> $headers
      *
      * @return array<string, mixed>
      */
-    public function post(string $uri, array $body = []): array
+    public function put(string $uri, array $body, array $headers = []): array
     {
-        return $this->callMethod('POST', $uri, $body);
+        return $this->callMethod('PUT', $uri, $body, $headers);
     }
 
     /**
      * @param array<string, mixed> $body
+     * @param array<string, string> $headers
      *
      * @return array<string, mixed>
      */
-    public function put(string $uri, array $body): array
+    public function patch(string $uri, array $body = [], array $headers = []): array
     {
-        return $this->callMethod('PUT', $uri, $body);
+        return $this->callMethod('PATCH', $uri, $body, $headers);
     }
 
     /**
      * @param array<string, mixed> $body
+     * @param array<string, string> $headers
      *
      * @return array<string, mixed>
      */
-    public function patch(string $uri, array $body = []): array
+    public function delete(string $uri, array $body = [], array $headers = []): array
     {
-        return $this->callMethod('PATCH', $uri, $body);
+        return $this->callMethod('DELETE', $uri, $body, $headers);
     }
 
     /**
-     * @param array<string, mixed> $body
+     * @param array<string, mixed>|null $body null sends the request with no body
+     * @param array<string, string> $headers
      *
      * @return array<string, mixed>
      */
-    public function delete(string $uri, array $body = []): array
+    protected function callMethod(string $method, string $uri, ?array $body, array $headers = []): array
     {
-        return $this->callMethod('DELETE', $uri, $body);
-    }
+        $request = $this->requestFactory->createRequest($method, $uri);
 
-    /**
-     * @param array<string, mixed> $body
-     *
-     * @return array<string, mixed>
-     */
-    protected function callMethod(string $method, string $uri, array $body): array
-    {
-        $request = $this->requestFactory->createRequest($method, $uri)
-            ->withBody($this->buildBody($body));
+        if ($body !== null) {
+            $request = $request->withBody($this->buildBody($body));
+        }
+
+        foreach ($headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
 
         return $this->buildResponse($this->pluginClient->sendRequest($request));
     }
@@ -155,7 +168,13 @@ class HttpLayer
             'headers' => $response->getHeaders(),
             'body' => $body,
             'response' => $response,
+            'is_idempotent_replay' => $this->isIdempotentReplay($response),
         ];
+    }
+
+    protected function isIdempotentReplay(ResponseInterface $response): bool
+    {
+        return strcasecmp($response->getHeaderLine('Idempotent-Replayed'), 'true') === 0;
     }
 
     /**

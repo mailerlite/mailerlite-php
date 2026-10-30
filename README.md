@@ -22,6 +22,7 @@
         * [Cancel](#cancel-campaign)
         * [Subscriber activity](#campaign-subscriber-activity)
     * [Email API](#email)
+        * [Etags, retries and errors](#email-etags)
         * [Read](#read-email)
         * [Read a block](#read-email-block)
         * [Versions](#email-versions)
@@ -241,6 +242,7 @@ $response = $mailerLite->campaigns->create($data);
 To create an email for the simple editor, set `editor` and, optionally, a `template_id` to start from:
 
 ```php
+use MailerLite\Endpoints\Campaign;
 use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
@@ -253,7 +255,7 @@ $data = [
             'subject' => 'My new email',
             'from_name' => 'me',
             'from' => 'me@example.com',
-            'editor' => 'simple',
+            'editor' => Campaign::EDITOR_SIMPLE,
             'template_id' => '123',
         ]
     ],
@@ -382,6 +384,47 @@ $response = $mailerLite->campaigns->getSubscriberActivity($campaignId, $data);
 <a name="email"></a>
 ## Email API
 
+<a name="email-etags"></a>
+
+### Etags, retries and errors
+
+Every write must send the `etag` from your last read or write of the email. Reads return it in
+`$response['body']['etag']`, and each write returns the next one. For `createBlock`, `updateBlock`,
+`moveBlock`, `updateSettings` and `createTemplate`, put `etag` in `$data`. `deleteBlock` and
+`restoreVersion` take it as an argument.
+
+If the email changed after you read it, the write throws a `MailerLiteHttpException` with status 409:
+
+```php
+use MailerLite\Exceptions\MailerLiteHttpException;
+use MailerLite\Exceptions\MailerLiteValidationException;
+
+try {
+    $response = $mailerLite->emails->deleteBlock($emailId, $blockId, $etag);
+    $etag = $response['body']['etag'];
+} catch (MailerLiteHttpException $e) {
+    if ($e->getErrorCode() === MailerLiteHttpException::VERSION_CONFLICT) {
+        // Your copy is out of date. $e->getEtag() is the current etag,
+        // but read the email again before you decide to retry.
+    }
+} catch (MailerLiteValidationException $e) {
+    $errors = $e->getErrors(); // keyed by field, empty when the 422 has only a message
+}
+```
+
+To retry a write safely after a network error, pass an idempotency key as the last argument. Use
+the same key for the retry. The key must be 1 to 255 printable ASCII characters, with no space at
+the start or the end. If the API returns the stored response of the first attempt,
+`$response['is_idempotent_replay']` is `true`.
+
+```php
+$response = $mailerLite->emails->createBlock($emailId, $data, 'create-block-7f3a');
+```
+
+Email, block and version IDs must contain only the digits 0-9. An empty ID throws
+`MailerLiteEmptyIdException`, and any other ID that is not valid throws
+`MailerLiteInvalidIdException`. Both are thrown before the request is sent.
+
 <a name="read-email"></a>
 
 ### Read
@@ -409,7 +452,7 @@ $emailId = '123';
 
 $response = $mailerLite->emails->getHtml($emailId);
 
-$html = $response['body']; // raw HTML string, not an array
+$html = $response['body']['data']['html'];
 ```
 
 <a name="read-email-block"></a>
@@ -451,6 +494,7 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $emailId = '123';
 
 $response = $mailerLite->emails->createVersion($emailId);
+// 201 when a version is saved, 200 when nothing changed since the last one
 ```
 
 Restore a version
@@ -462,8 +506,9 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 
 $emailId = '123';
 $versionId = '789';
+$etag = '42'; // from your last read or write of this email
 
-$response = $mailerLite->emails->restoreVersion($emailId, $versionId);
+$response = $mailerLite->emails->restoreVersion($emailId, $versionId, $etag);
 ```
 
 <a name="create-email-block"></a>
@@ -471,6 +516,7 @@ $response = $mailerLite->emails->restoreVersion($emailId, $versionId);
 ### Create a block
 
 ```php
+use MailerLite\Endpoints\Email;
 use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
@@ -478,11 +524,19 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $emailId = '123';
 
 $data = [
-    // block fields, see the API docs
+    'etag' => '42',
+    'type' => Email::BLOCK_TYPE_DIVIDER,
+    'editor_content' => new \stdClass(),
+    'placement' => ['position' => Email::POSITION_AFTER, 'block_id' => '57'],
 ];
 
 $response = $mailerLite->emails->createBlock($emailId, $data);
 ```
+
+A PHP empty array is sent as `[]`. To send an empty `editor_content` object, `{}`, use `new \stdClass()`.
+
+`placement.position` is `start`, `end`, `before` or `after` (the `Email::POSITION_*` constants).
+`before` and `after` need a `block_id`. For `start` and `end`, `block_id` is not sent.
 
 <a name="update-email-block"></a>
 
@@ -516,7 +570,8 @@ $emailId = '123';
 $blockId = '456';
 
 $data = [
-    // new position, see the API docs
+    'etag' => '42',
+    'placement' => ['position' => 'after', 'block_id' => '57'],
 ];
 
 $response = $mailerLite->emails->moveBlock($emailId, $blockId, $data);
@@ -534,7 +589,11 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $emailId = '123';
 $blockId = '456';
 
-$response = $mailerLite->emails->deleteBlock($emailId, $blockId);
+$etag = '42'; // from your last read or write of this email
+
+$response = $mailerLite->emails->deleteBlock($emailId, $blockId, $etag);
+
+$etag = $response['body']['etag']; // the email's new etag
 ```
 
 <a name="validate-email-block"></a>
@@ -560,6 +619,7 @@ $response = $mailerLite->emails->validateBlock($data);
 ### Update settings
 
 ```php
+use MailerLite\Endpoints\Email;
 use MailerLite\MailerLite;
 
 $mailerLite = new MailerLite(['api_key' => 'key']);
@@ -567,11 +627,21 @@ $mailerLite = new MailerLite(['api_key' => 'key']);
 $emailId = '123';
 
 $data = [
-    // settings to change, see the API docs
+    'etag' => '42',
+    'brand' => ['mode' => Email::BRAND_MODE_CUSTOM, 'background_color' => '#f4f4f4'],
 ];
 
 $response = $mailerLite->emails->updateSettings($emailId, $data);
 ```
+
+Send only the keys you want to change. A value you send is stored on this email, even if it is the
+same as the inherited value. To go back to the inherited value:
+
+- for a brand colour, send `''`;
+- for a footer text, send an empty editor document, such as `['editor_content' => ['content' => []]]`.
+
+An empty string is not accepted for other colours, sizes, `button.border_radius` or `brand.style`.
+Those return 422.
 
 <a name="validate-email-settings"></a>
 

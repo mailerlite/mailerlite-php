@@ -94,4 +94,44 @@ final class HttpLayerPsrTest extends TestCase
 
         $layer->delete('api/subscribers/123');
     }
+
+    public function test_bridge_forwards_delete_body_and_headers(): void
+    {
+        $fake = new FakeClient();
+        $fake->queue = [
+            new Response(200, ['Content-Type' => 'application/json', 'Idempotent-Replayed' => 'true'], '{"etag":"43"}'),
+            new Response(200, ['Content-Type' => 'application/json'], '{"etag":"44"}'),
+        ];
+
+        $psr17 = new Psr17Factory();
+        $factories = new Psr17FactoryAggregate($psr17, $psr17);
+
+        $bridge = new HttpLayerPsrBridge(new HttpLayerPsr($fake, $factories, 'TEST_KEY'));
+
+        $resp = $bridge->delete('api/emails/123/blocks/456', ['etag' => '42'], ['Idempotency-Key' => 'k']);
+        $this->assertSame('DELETE', $fake->lastRequest->getMethod());
+        $this->assertSame('{"etag":"42"}', (string)$fake->lastRequest->getBody());
+        $this->assertSame('k', $fake->lastRequest->getHeaderLine('Idempotency-Key'));
+        $this->assertSame('Bearer TEST_KEY', $fake->lastRequest->getHeaderLine('Authorization'));
+        $this->assertTrue($resp['is_idempotent_replay']);
+
+        $resp = $bridge->request('DELETE', 'api/emails/123/blocks/456', '{"etag":"43"}');
+        $this->assertSame('{"etag":"43"}', (string)$fake->lastRequest->getBody());
+        $this->assertFalse($resp['is_idempotent_replay']);
+    }
+
+    public function test_bridge_post_without_body(): void
+    {
+        $fake = new FakeClient();
+        $fake->queue = [ new Response(201, ['Content-Type' => 'application/json'], '{"data":{}}') ];
+
+        $psr17 = new Psr17Factory();
+        $factories = new Psr17FactoryAggregate($psr17, $psr17);
+
+        $bridge = new HttpLayerPsrBridge(new HttpLayerPsr($fake, $factories, 'TEST_KEY'));
+
+        $bridge->post('api/emails/123/versions', null);
+        $this->assertSame('POST', $fake->lastRequest->getMethod());
+        $this->assertSame('', (string)$fake->lastRequest->getBody());
+    }
 }
