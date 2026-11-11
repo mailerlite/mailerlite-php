@@ -573,7 +573,9 @@ $data = [
 $response = $mailerLite->emails->createBlock($emailId, $data);
 ```
 
-A PHP empty array is sent as `[]`. To send an empty `editor_content` object, `{}`, use `new \stdClass()`.
+In `createBlock`, `updateBlock` and `validateBlock`, the SDK sends an empty `editor_content`, and each empty
+`attrs` and `mobile` in it, as `{}`. Thus you can send back an `editor_content` that you read, with no changes.
+In other places, the SDK sends a PHP empty array as `[]`. To send `{}` there, use `new \stdClass()`.
 
 `placement.position` is `start`, `end`, `before` or `after` (the `Email::POSITION_*` constants).
 `before` and `after` need a `block_id`.

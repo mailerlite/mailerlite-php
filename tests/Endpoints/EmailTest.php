@@ -297,6 +297,80 @@ class EmailTest extends TestCase
         self::assertEquals(['etag' => ''], json_decode((string) $this->client->getLastRequest()->getBody(), true));
     }
 
+    public function test_a_block_read_from_the_api_can_be_sent_back_unchanged()
+    {
+        // The SDK decodes {"attrs":{},"content":[]} into ['attrs' => [], 'content' => []]
+        $editorContent = json_decode('{"attrs":{},"content":[]}', true);
+
+        $this->emails->updateBlock($this->emailId, $this->blockId, ['etag' => '42', 'editor_content' => $editorContent]);
+
+        self::assertSame(
+            '{"etag":"42","editor_content":{"attrs":{},"content":[]}}',
+            (string) $this->client->getLastRequest()->getBody()
+        );
+    }
+
+    public function test_every_block_write_sends_empty_attrs_and_mobile_as_objects()
+    {
+        $editorContent = [
+            'attrs' => [],
+            'mobile' => [],
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'Hi',
+                    'marks' => [['type' => 'textStyle', 'attrs' => []], ['type' => 'bold']],
+                ],
+                [
+                    'type' => 'listItem',
+                    'attrs' => ['indent' => 0, 'items' => []],
+                    'content' => [['type' => 'hardBreak', 'attrs' => [], 'marks' => []]],
+                ],
+            ],
+        ];
+        $expected = '"editor_content":{"attrs":{},"mobile":{},"content":['
+            . '{"type":"text","text":"Hi","marks":[{"type":"textStyle","attrs":{}},{"type":"bold"}]},'
+            . '{"type":"listItem","attrs":{"indent":0,"items":[]},'
+            . '"content":[{"type":"hardBreak","attrs":{},"marks":[]}]}]}';
+
+        $calls = [
+            'createBlock' => fn (array $params) => $this->emails->createBlock($this->emailId, $params),
+            'updateBlock' => fn (array $params) => $this->emails->updateBlock($this->emailId, $this->blockId, $params),
+            'validateBlock' => fn (array $params) => $this->emails->validateBlock($params),
+        ];
+
+        foreach ($calls as $name => $call) {
+            $this->client->addResponse($this->response);
+            $call(['type' => 'paragraph', 'editor_content' => $editorContent]);
+
+            self::assertSame(
+                '{"type":"paragraph",' . $expected . '}',
+                (string) $this->client->getLastRequest()->getBody(),
+                $name
+            );
+        }
+    }
+
+    public function test_an_empty_editor_content_is_sent_as_an_object()
+    {
+        $calls = [
+            'createBlock' => fn (array $params) => $this->emails->createBlock($this->emailId, $params),
+            'updateBlock' => fn (array $params) => $this->emails->updateBlock($this->emailId, $this->blockId, $params),
+            'validateBlock' => fn (array $params) => $this->emails->validateBlock($params),
+        ];
+
+        foreach ($calls as $name => $call) {
+            $this->client->addResponse($this->response);
+            $call(['type' => 'divider', 'editor_content' => []]);
+
+            self::assertSame(
+                '{"type":"divider","editor_content":{}}',
+                (string) $this->client->getLastRequest()->getBody(),
+                $name
+            );
+        }
+    }
+
     public function test_placement_is_sent_as_given()
     {
         $placements = [
