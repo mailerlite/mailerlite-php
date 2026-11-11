@@ -280,7 +280,7 @@ $data = [
 $response = $mailerLite->campaigns->create($data);
 ```
 
-To create an email for the simple editor, set `editor` and, optionally, a `template_id` to start from:
+To create an email for the simple editor, set `editor`. To start the email from a template, also set `template_id`:
 
 ```php
 use MailerLite\Endpoints\Campaign;
@@ -304,6 +304,12 @@ $data = [
 
 $response = $mailerLite->campaigns->create($data);
 ```
+
+`template_id` is the ID of a simple editor template. Use a template from the shared gallery, or a template
+that you saved from your own email with [`createTemplate`](#create-email-template). Send `template_id` only
+when `editor` is `simple`. Send the same `template_id` on every email in the request. Without `template_id`,
+the email starts from the default blank template. The API copies the template into the new email and does not
+change the template.
 
 <a name="read-campaign"></a>
 
@@ -720,6 +726,9 @@ $data = [
 
 $response = $mailerLite->emails->createTemplate($emailId, $data);
 ```
+
+To start a new campaign email from the saved template, send `$response['body']['data']['id']` as `template_id`
+when you [create a campaign](#create-campaign).
 
 ## Brand styles API
 
