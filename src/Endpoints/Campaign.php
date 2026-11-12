@@ -4,6 +4,8 @@ namespace MailerLite\Endpoints;
 
 class Campaign extends AbstractEndpoint
 {
+    public const EDITOR_SIMPLE = 'simple';
+
     protected string $endpoint = 'campaigns';
 
     /**
