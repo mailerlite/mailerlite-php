@@ -94,7 +94,7 @@ class Email extends AbstractEndpoint
 
         return $this->httpLayer->post(
             $this->buildUri("{$this->endpoint}/{$emailId}/blocks"),
-            $params,
+            $this->withEditorContentObjects($params),
             $this->idempotencyHeaders($idempotencyKey)
         );
     }
@@ -125,7 +125,7 @@ class Email extends AbstractEndpoint
     {
         return $this->httpLayer->post(
             $this->buildUri("{$this->endpoint}/blocks/validate"),
-            $params
+            $this->withEditorContentObjects($params)
         );
     }
 
@@ -205,7 +205,7 @@ class Email extends AbstractEndpoint
 
         return $this->httpLayer->patch(
             $this->buildUri("{$this->endpoint}/{$emailId}/blocks/{$blockId}"),
-            $params,
+            $this->withEditorContentObjects($params),
             $this->idempotencyHeaders($idempotencyKey)
         );
     }
@@ -254,6 +254,54 @@ class Email extends AbstractEndpoint
         if (!preg_match('/^[0-9]+$/D', $id)) {
             throw new MailerLiteInvalidIdException("{$name} must contain only the digits 0-9.");
         }
+    }
+
+    /**
+     * The SDK decodes JSON objects into PHP arrays, so an empty object `{}` in a block that you read
+     * comes back as `[]`. JSON-encoded, `[]` is a list, and the API refuses a list where it needs an
+     * object. This sends an empty `editor_content` and every empty `attrs` and `mobile` as `{}`.
+     *
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
+    private function withEditorContentObjects(array $params): array
+    {
+        if (array_key_exists('editor_content', $params)) {
+            $params['editor_content'] = $this->withEmptyObjects($params['editor_content']);
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param mixed $node
+     *
+     * @return mixed
+     */
+    private function withEmptyObjects($node)
+    {
+        if (!is_array($node)) {
+            return $node;
+        }
+
+        if ($node === []) {
+            return new \stdClass();
+        }
+
+        foreach (['attrs', 'mobile'] as $key) {
+            if (isset($node[$key]) && $node[$key] === []) {
+                $node[$key] = new \stdClass();
+            }
+        }
+
+        foreach (['content', 'marks'] as $key) {
+            if (isset($node[$key]) && is_array($node[$key])) {
+                $node[$key] = array_map(fn ($child) => $this->withEmptyObjects($child), $node[$key]);
+            }
+        }
+
+        return $node;
     }
 
     /**
